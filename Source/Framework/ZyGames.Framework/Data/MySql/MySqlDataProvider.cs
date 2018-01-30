@@ -239,7 +239,7 @@ namespace ZyGames.Framework.Data.MySql
         /// <param name="commandText"></param>
         /// <param name="parameters"></param>
         /// <returns></returns>
-        public override int ExecuteNonQuery(int identityId, CommandType commandType, string tableName, string commandText, params IDataParameter[] parameters)
+        public override int ExecuteNonQuery(long identityId, CommandType commandType, string tableName, string commandText, params IDataParameter[] parameters)
         {
             SqlStatement statement = new SqlStatement();
             statement.IdentityID = identityId;
@@ -258,7 +258,7 @@ namespace ZyGames.Framework.Data.MySql
         /// <param name="identityId"></param>
         /// <param name="command"></param>
         /// <returns></returns>
-        public override SqlStatement GenerateSql(int identityId, CommandStruct command)
+        public override SqlStatement GenerateSql(long identityId, CommandStruct command)
         {
             command.Parser();
             SqlStatement statement = new SqlStatement();

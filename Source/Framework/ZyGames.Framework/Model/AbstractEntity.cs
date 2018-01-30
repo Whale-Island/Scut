@@ -21,12 +21,11 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 ****************************************************************************/
-
-using Newtonsoft.Json;
-using ProtoBuf;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using Newtonsoft.Json;
+using ProtoBuf;
 using ZyGames.Framework.Cache.Generic;
 using ZyGames.Framework.Common;
 using ZyGames.Framework.Common.Log;
@@ -43,20 +42,18 @@ namespace ZyGames.Framework.Model
     public abstract class AbstractEntity : EntityChangeEvent, IDataExpired, ISqlEntity, IComparable<AbstractEntity>
     {
         /// <summary>
-        ///
+        /// 
         /// </summary>
-        protected internal const char KeyCodeJoinChar = '-';
+        internal protected const char KeyCodeJoinChar = '-';
 
         /// <summary>
-        ///
+        /// 
         /// </summary>
-        protected const int DefIdentityId = 10000;
-
+        protected const long DefIdentityId = 10000;
         /// <summary>
         /// 存储改变的属性集合
         /// </summary>
         private ConcurrentQueue<string> _changePropertys = new ConcurrentQueue<string>();
-
         /// <summary>
         /// 等待更新属性
         /// </summary>
@@ -64,7 +61,6 @@ namespace ZyGames.Framework.Model
 
         [NonSerialized]
         private SchemaTable _schema;
-
         [NonSerialized]
         private ObjectAccessor _typeAccessor;
 
@@ -83,7 +79,7 @@ namespace ZyGames.Framework.Model
         }
 
         /// <summary>
-        ///
+        /// 
         /// </summary>
         /// <param name="keyCode"></param>
         /// <returns></returns>
@@ -97,13 +93,12 @@ namespace ZyGames.Framework.Model
         }
 
         /// <summary>
-        ///
+        /// 
         /// </summary>
         protected AbstractEntity()
             : this(false)
         {
         }
-
         /// <summary>
         /// Initializes a new instance of the <see cref="ZyGames.Framework.Model.AbstractEntity"/> class.
         /// </summary>
@@ -114,7 +109,7 @@ namespace ZyGames.Framework.Model
         }
 
         /// <summary>
-        ///
+        /// 
         /// </summary>
         /// <param name="isReadOnly"></param>
         protected AbstractEntity(bool isReadOnly)
@@ -129,7 +124,7 @@ namespace ZyGames.Framework.Model
         }
 
         /// <summary>
-        ///
+        /// 
         /// </summary>
         internal void Init()
         {
@@ -137,7 +132,7 @@ namespace ZyGames.Framework.Model
         }
 
         /// <summary>
-        ///
+        /// 
         /// </summary>
         public void ResetState()
         {
@@ -155,9 +150,8 @@ namespace ZyGames.Framework.Model
         {
             ResetState();
         }
-
         /// <summary>
-        ///
+        /// 
         /// </summary>
         /// <returns></returns>
         public virtual DateTime GetCreateTime()
@@ -198,15 +192,13 @@ namespace ZyGames.Framework.Model
         /// </summary>
         [JsonIgnore]
         protected virtual string KeyValue { get { return ""; } }
-
         /// <summary>
-        ///
+        /// 
         /// </summary>
         [ProtoMember(100020)]
         protected bool _isReadOnly;
-
         /// <summary>
-        ///
+        /// 
         /// </summary>
         [JsonIgnore]
         public bool IsReadOnly
@@ -216,6 +208,7 @@ namespace ZyGames.Framework.Model
                 return _isReadOnly;
             }
         }
+
 
         /// <summary>
         /// 判断是否处理加载中设置属性,只读实体为False后才不可修改
@@ -231,12 +224,11 @@ namespace ZyGames.Framework.Model
         }
 
         /// <summary>
-        ///
+        /// 
         /// </summary>
         protected bool _isNew;
-
         /// <summary>
-        ///
+        /// 
         /// </summary>
         [JsonIgnore]
         public bool IsNew
@@ -256,10 +248,7 @@ namespace ZyGames.Framework.Model
         [JsonIgnore]
         public virtual bool IsRemoveFlag
         {
-            get
-            {
-                return _isRemoveFlag;
-            }
+            get { return _isRemoveFlag; }
             protected set
             {
                 if (!Equals(_isRemoveFlag, value))
@@ -271,7 +260,7 @@ namespace ZyGames.Framework.Model
         }
 
         /// <summary>
-        ///
+        /// 
         /// </summary>
         protected bool _isDelete;
 
@@ -291,9 +280,8 @@ namespace ZyGames.Framework.Model
                 _isDelete = value;
             }
         }
-
         ///// <summary>
-        /////
+        ///// 
         ///// </summary>
         //[ProtoMember(100024)]
         //protected AccessLevel _access;
@@ -314,7 +302,7 @@ namespace ZyGames.Framework.Model
         {
             get
             {
-                int id = GetIdentityId();
+                var id = GetIdentityId();
                 if (id == 0)
                 {
                     TraceLog.WriteError("The {0} property \"PersonalId\" is empty.", _schema.EntityType.FullName);
@@ -335,13 +323,12 @@ namespace ZyGames.Framework.Model
         [ProtoMember(100026)]
         public DateTime ExpiredTime { get; set; }
 
-        #endregion property
-
+        #endregion
         /// <summary>
-        ///
+        /// 
         /// </summary>
         /// <returns></returns>
-        public int GetMessageQueueId()
+        public long GetMessageQueueId()
         {
             return GetIdentityId();
         }
@@ -349,7 +336,7 @@ namespace ZyGames.Framework.Model
         /// <summary>
         /// 标识ID，消息队列分发
         /// </summary>
-        protected internal abstract int GetIdentityId();
+        internal protected abstract long GetIdentityId();
 
         /// <summary>
         /// 当前对象(包括继承)的属性触发通知事件
@@ -368,7 +355,7 @@ namespace ZyGames.Framework.Model
         }
 
         /// <summary>
-        ///
+        /// 
         /// </summary>
         /// <param name="sender">由IContainer对象触发</param>
         /// <param name="eventArgs"></param>
@@ -397,7 +384,6 @@ namespace ZyGames.Framework.Model
             }
             return false;
         }
-
         private void PutToChangeKeys(AbstractEntity entity)
         {
             if (!IsModifying)
@@ -407,7 +393,6 @@ namespace ZyGames.Framework.Model
                 DataSyncQueueManager.Send(entity);
             }
         }
-
         /// <summary>
         /// 设置UnChange事件通知
         /// </summary>
@@ -437,7 +422,7 @@ namespace ZyGames.Framework.Model
         }
 
         /// <summary>
-        ///
+        /// 
         /// </summary>
         /// <param name="canRead"></param>
         /// <param name="property"></param>
@@ -501,7 +486,7 @@ namespace ZyGames.Framework.Model
         }
 
         /// <summary>
-        ///
+        /// 
         /// </summary>
         /// <param name="name"></param>
         /// <param name="value"></param>
@@ -585,7 +570,6 @@ namespace ZyGames.Framework.Model
         {
             _isNew = false;
         }
-
         /// <summary>
         /// 在索引属性调用
         /// </summary>
@@ -727,13 +711,12 @@ namespace ZyGames.Framework.Model
         {
             get { return _changePropertys.Count > 0; }
         }
-
         /// <summary>
         /// 转换自定对象类型，并绑定集合字段信息
         /// </summary>
         /// <param name="fieldValue"></param>
         /// <param name="propertyName"></param>
-        protected internal T ConvertCustomField<T>(object fieldValue, string propertyName) where T : IItemChangeEvent, new()
+        internal protected T ConvertCustomField<T>(object fieldValue, string propertyName) where T : IItemChangeEvent, new()
         {
             if (fieldValue == null)
             {
@@ -765,7 +748,7 @@ namespace ZyGames.Framework.Model
         }
 
         /// <summary>
-        ///
+        /// 
         /// </summary>
         /// <param name="other"></param>
         /// <returns></returns>
@@ -827,9 +810,8 @@ namespace ZyGames.Framework.Model
             }
             return result;
         }
-
         /// <summary>
-        ///
+        /// 
         /// </summary>
         /// <param name="disposing"></param>
         protected override void Dispose(bool disposing)
@@ -866,7 +848,7 @@ namespace ZyGames.Framework.Model
         }
 
         /// <summary>
-        ///
+        /// 
         /// </summary>
         /// <param name="value"></param>
         /// <param name="columnType"></param>

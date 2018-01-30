@@ -243,7 +243,7 @@ namespace ZyGames.Framework.Data
         /// <param name="commandText">sql字符串语句</param>
         /// <param name="parameters">sql的参数</param>
         /// <returns></returns>
-        public int ExecuteNonQuery(int identityId, CommandType commandType, string commandText, params IDataParameter[] parameters)
+        public int ExecuteNonQuery(long identityId, CommandType commandType, string commandText, params IDataParameter[] parameters)
         {
             return ExecuteNonQuery(identityId, commandType, null, commandText, parameters);
         }
@@ -257,7 +257,7 @@ namespace ZyGames.Framework.Data
         /// <param name="commandText">sql字符串语句</param>
         /// <param name="parameters">sql的参数</param>
         /// <returns></returns>
-        public abstract int ExecuteNonQuery(int identityId, CommandType commandType, string tableName, string commandText, params IDataParameter[] parameters);
+        public abstract int ExecuteNonQuery(long identityId, CommandType commandType, string tableName, string commandText, params IDataParameter[] parameters);
 
         /// <summary>
         /// 生成Sql语句
@@ -265,7 +265,7 @@ namespace ZyGames.Framework.Data
         /// <param name="identityId">消息队列负载标识ID</param>
         /// <param name="command">命令对象</param>
         /// <returns></returns>
-        public abstract SqlStatement GenerateSql(int identityId, CommandStruct command);
+        public abstract SqlStatement GenerateSql(long identityId, CommandStruct command);
 
         /// <summary>
         /// 检查是否有指定表名
