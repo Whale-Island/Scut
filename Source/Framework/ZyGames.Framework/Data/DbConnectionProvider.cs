@@ -21,11 +21,12 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 ****************************************************************************/
+
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Collections.Concurrent;
+using System.Collections.Generic;
 using System.Configuration;
+using System.Linq;
 using ZyGames.Framework.Common;
 using ZyGames.Framework.Common.Configuration;
 using ZyGames.Framework.Common.Log;
@@ -50,6 +51,7 @@ namespace ZyGames.Framework.Data
         {
             get { return dbProviders.Count; }
         }
+
         /// <summary>
         /// 初始化DB连接
         /// </summary>
@@ -105,9 +107,9 @@ namespace ZyGames.Framework.Data
         }
 
         /// <summary>
-        /// 
+        /// 以配置文件中配置的键，创建一个数据访问基类对象，并放入缓存中
         /// </summary>
-        /// <param name="connectKey"></param>
+        /// <param name="connectKey">连接配置键</param>
         /// <returns></returns>
         public static DbBaseProvider CreateDbProvider(string connectKey)
         {
@@ -156,9 +158,9 @@ namespace ZyGames.Framework.Data
         }
 
         /// <summary>
-        /// 
+        /// 通过实体架构信息对象创建一个数据访问基类对象，并放入缓存中
         /// </summary>
-        /// <param name="schema"></param>
+        /// <param name="schema">实体架构信息</param>
         /// <returns></returns>
         public static DbBaseProvider CreateDbProvider(SchemaTable schema)
         {
@@ -174,11 +176,11 @@ namespace ZyGames.Framework.Data
         }
 
         /// <summary>
-        /// 
+        /// 创建一个数据访问基类对象，并放入缓存中
         /// </summary>
-        /// <param name="name"></param>
-        /// <param name="providerTypeName"></param>
-        /// <param name="connectionString"></param>
+        /// <param name="name">键名</param>
+        /// <param name="providerTypeName">驱动提供者类型名</param>
+        /// <param name="connectionString">数据库连接串</param>
         /// <returns></returns>
         public static DbBaseProvider CreateDbProvider(string name, string providerTypeName, string connectionString)
         {

@@ -21,6 +21,7 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 ****************************************************************************/
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -64,9 +65,8 @@ namespace ZyGames.Framework.Cache.Generic
             return result;
         }
 
-
         /// <summary>
-        /// 
+        ///
         /// </summary>
         public static void ReLoad(string personalId, Predicate<SchemaTable> match)
         {
@@ -79,8 +79,9 @@ namespace ZyGames.Framework.Cache.Generic
                 }
             }
         }
+
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="personalId"></param>
         /// <param name="schemaTable"></param>
@@ -90,7 +91,7 @@ namespace ZyGames.Framework.Cache.Generic
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="personalId"></param>
         /// <param name="match"></param>
@@ -108,7 +109,7 @@ namespace ZyGames.Framework.Cache.Generic
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="personalId"></param>
         /// <param name="schemaTable"></param>
@@ -133,9 +134,8 @@ namespace ZyGames.Framework.Cache.Generic
             func((dynamic)type.CreateInstance());
         }
 
-
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="personalId"></param>
@@ -147,7 +147,7 @@ namespace ZyGames.Framework.Cache.Generic
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="personalList"></param>
@@ -157,8 +157,9 @@ namespace ZyGames.Framework.Cache.Generic
         {
             return new PersonalCacheStruct<T>().TakeOrLoad(personalList, isAutoLoad);
         }
+
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <returns></returns>
@@ -178,7 +179,7 @@ namespace ZyGames.Framework.Cache.Generic
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="entityName"></param>
         /// <returns></returns>
@@ -204,7 +205,7 @@ namespace ZyGames.Framework.Cache.Generic
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="personalId"></param>
@@ -228,8 +229,9 @@ namespace ZyGames.Framework.Cache.Generic
             }
             return result;
         }
+
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="enumerable"></param>
         /// <returns></returns>
@@ -239,7 +241,7 @@ namespace ZyGames.Framework.Cache.Generic
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="checkMutilKey">The entity need to reload when it has be mutil key</param>
         /// <param name="enumerable"></param>
@@ -269,7 +271,7 @@ namespace ZyGames.Framework.Cache.Generic
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="personalId"></param>
@@ -293,9 +295,11 @@ namespace ZyGames.Framework.Cache.Generic
             }
             return result;
         }
+
         #region Get
+
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <typeparam name="T1"></typeparam>
         /// <typeparam name="T2"></typeparam>
@@ -312,7 +316,7 @@ namespace ZyGames.Framework.Cache.Generic
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <typeparam name="T1"></typeparam>
         /// <typeparam name="T2"></typeparam>
@@ -333,7 +337,7 @@ namespace ZyGames.Framework.Cache.Generic
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <typeparam name="T1"></typeparam>
         /// <typeparam name="T2"></typeparam>
@@ -358,7 +362,7 @@ namespace ZyGames.Framework.Cache.Generic
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <typeparam name="T1"></typeparam>
         /// <typeparam name="T2"></typeparam>
@@ -387,7 +391,7 @@ namespace ZyGames.Framework.Cache.Generic
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <typeparam name="T1"></typeparam>
         /// <typeparam name="T2"></typeparam>
@@ -420,7 +424,7 @@ namespace ZyGames.Framework.Cache.Generic
             t6 = Get<T6>(personalId, allowNull);
         }
 
-        #endregion
+        #endregion Get
     }
 
     /// <summary>
@@ -429,7 +433,7 @@ namespace ZyGames.Framework.Cache.Generic
     public class PersonalCacheStruct<T> : BaseCacheStruct<T> where T : BaseEntity, new()
     {
         /// <summary>
-        /// 
+        ///
         /// </summary>
         public PersonalCacheStruct()
         {
@@ -457,7 +461,6 @@ namespace ZyGames.Framework.Cache.Generic
             return ContainGroupKey(personalId);
         }
 
-
         /// <summary>
         /// 是否存在数据
         /// </summary>
@@ -470,7 +473,7 @@ namespace ZyGames.Framework.Cache.Generic
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="personalId"></param>
         /// <param name="data"></param>
@@ -532,7 +535,7 @@ namespace ZyGames.Framework.Cache.Generic
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="personalId"></param>
         /// <param name="isAutoLoad"></param>
@@ -544,7 +547,7 @@ namespace ZyGames.Framework.Cache.Generic
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="personalList"></param>
         /// <param name="isAutoLoad"></param>
@@ -553,8 +556,9 @@ namespace ZyGames.Framework.Cache.Generic
         {
             return DataContainer.TakeOrLoadGroup(personalList.Select(AbstractEntity.EncodeKeyCode), isAutoLoad);
         }
+
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="personalId"></param>
         /// <param name="match"></param>
@@ -605,8 +609,9 @@ namespace ZyGames.Framework.Cache.Generic
         {
             return FindAll(personalId, m => true, isSort);
         }
+
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="personalId"></param>
         /// <param name="match"></param>
@@ -620,7 +625,7 @@ namespace ZyGames.Framework.Cache.Generic
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="personalId"></param>
         /// <param name="isSort"></param>
@@ -752,7 +757,7 @@ namespace ZyGames.Framework.Cache.Generic
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="enumerable"></param>
         /// <param name="period"></param>
@@ -802,6 +807,7 @@ namespace ZyGames.Framework.Cache.Generic
             }
             return false;
         }
+
         /// <summary>
         /// add or update
         /// </summary>
@@ -824,8 +830,9 @@ namespace ZyGames.Framework.Cache.Generic
             }
             return false;
         }
+
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="enumerable"></param>
         /// <param name="period"></param>
@@ -850,7 +857,6 @@ namespace ZyGames.Framework.Cache.Generic
             return true;
         }
 
-
         /// <summary>
         /// 是否有多个键且未加载成功状态
         /// </summary>
@@ -867,7 +873,6 @@ namespace ZyGames.Framework.Cache.Generic
             }
         }
 
-
         /// <summary>
         /// 更新自已的数据
         /// </summary>
@@ -877,8 +882,9 @@ namespace ZyGames.Framework.Cache.Generic
             personalId = AbstractEntity.EncodeKeyCode(personalId);
             UpdateGroup(true, personalId);
         }
+
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <returns></returns>
         protected override bool LoadFactory(bool isReplace)
@@ -887,7 +893,7 @@ namespace ZyGames.Framework.Cache.Generic
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="key"></param>
         /// <param name="isReplace"></param>
@@ -938,7 +944,7 @@ namespace ZyGames.Framework.Cache.Generic
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="dataList"></param>
         /// <param name="isReplace"></param>
@@ -965,6 +971,7 @@ namespace ZyGames.Framework.Cache.Generic
             personalId = AbstractEntity.EncodeKeyCode(personalId);
             return UpdateGroup(isChange, personalId);
         }
+
         /// <summary>
         /// The value has be removed from the cache
         /// </summary>
@@ -1007,5 +1014,38 @@ namespace ZyGames.Framework.Cache.Generic
             return TryGetGroup(personalId, out enityGroup, out loadStatus);
         }
 
+        /// <summary>
+        ///
+        /// </summary>
+        /// <param name="userId"></param>
+        /// <param name="keys"></param>
+        /// <returns></returns>
+        public T FindKey(int userId, params object[] keys)
+        {
+            return FindKey(userId.ToString(), keys);
+        }
+
+        /// <summary>
+        ///
+        /// </summary>
+        /// <param name="userId"></param>
+        /// <param name="isSort"></param>
+        /// <returns></returns>
+        public List<T> FindAll(int userId, bool isSort = true)
+        {
+            return FindAll(userId.ToString(), x => true, isSort);
+        }
+
+        /// <summary>
+        ///
+        /// </summary>
+        /// <param name="userId"></param>
+        /// <param name="match"></param>
+        /// <param name="isSort"></param>
+        /// <returns></returns>
+        public List<T> FindAll(int userId, Predicate<T> match, bool isSort = true)
+        {
+            return FindAll(userId.ToString(), match, isSort);
+        }
     }
 }

@@ -34,14 +34,14 @@ namespace ZyGames.Framework.Net
     public class DbTransponder : ITransponder
     {
         /// <summary>
-        /// 
+        ///
         /// </summary>
         public DbTransponder()
         {
         }
 
         /// <summary>
-        /// 
+        /// 尝试接收数据
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="receiveParam"></param>
@@ -54,8 +54,9 @@ namespace ZyGames.Framework.Net
                 return getter.TryReceive<T>(out dataList);
             }
         }
+
         /// <summary>
-        /// 
+        /// 发送更新数据
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="dataList"></param>
@@ -64,7 +65,7 @@ namespace ZyGames.Framework.Net
         {
             using (var sender = new SqlDataSender(sendParam.IsChange, sendParam.Schema.ConnectKey))
             {
-               return sender.Send(dataList);
+                return sender.Send(dataList);
             }
         }
     }

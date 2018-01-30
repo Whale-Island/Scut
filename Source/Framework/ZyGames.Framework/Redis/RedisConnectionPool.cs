@@ -21,29 +21,28 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 ****************************************************************************/
+
+using ServiceStack.Redis;
+using ServiceStack.Redis.Pipeline;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using System.Net;
 using System.Net.NetworkInformation;
-using System.Net.Sockets;
 using System.Text;
-using ServiceStack.Redis;
-using ServiceStack.Redis.Pipeline;
+using ZyGames.Framework.Common;
 using ZyGames.Framework.Common.Configuration;
 using ZyGames.Framework.Common.Log;
 using ZyGames.Framework.Common.Serialization;
 using ZyGames.Framework.Common.Timing;
 using ZyGames.Framework.Config;
 using ZyGames.Framework.Model;
-using ZyGames.Framework.Common;
 
 namespace ZyGames.Framework.Redis
 {
     /// <summary>
-    /// 
+    ///
     /// </summary>
     public enum RedisStorageVersion
     {
@@ -51,26 +50,30 @@ namespace ZyGames.Framework.Redis
         /// first version
         /// </summary>
         Default = 0,
+
         /// <summary>
         /// Entity use hash storage version.
         /// </summary>
         Hash = 5,
+
         /// <summary>
         /// Entity use hash storage and mutil key use map find version.
         /// </summary>
         HashMutilKeyMap = 7
     }
+
     /// <summary>
     /// 连接池管理
     /// </summary>
     public static class RedisConnectionPool
     {
         /// <summary>
-        /// 
+        ///
         /// </summary>
         public const string EntityKeyPreChar = "$";
+
         /// <summary>
-        /// 
+        ///
         /// </summary>
         internal const string EntityKeySplitChar = "_";
 
@@ -202,7 +205,7 @@ namespace ZyGames.Framework.Redis
         }
 
         /// <summary>
-        /// 
+        /// 获取当前Redis信息对象
         /// </summary>
         public static RedisInfo CurrRedisInfo
         {
@@ -218,10 +221,10 @@ namespace ZyGames.Framework.Redis
         }
 
         /// <summary>
-        /// 
+        /// 设置Redis自增编号
         /// </summary>
-        /// <param name="key"></param>
-        /// <param name="value"></param>
+        /// <param name="key">自增主键值</param>
+        /// <param name="value">编号值</param>
         /// <returns></returns>
         public static long SetNo(string key, long value)
         {
@@ -229,7 +232,7 @@ namespace ZyGames.Framework.Redis
         }
 
         /// <summary>
-        /// 
+        /// 解析redis配置连接信息
         /// </summary>
         /// <param name="redisHost">format:password@ip:port#db</param>
         /// <returns></returns>
@@ -242,9 +245,9 @@ namespace ZyGames.Framework.Redis
         }
 
         /// <summary>
-        /// SetNo
+        /// 设置Redis自增编号
         /// </summary>
-        /// <param name="redisHost">format:password@ip:port#db</param>
+        /// <param name="redisHost">Redis主机地址，format:password@ip:port#db</param>
         /// <param name="key"></param>
         /// <param name="value"></param>
         /// <returns></returns>
@@ -267,11 +270,11 @@ namespace ZyGames.Framework.Redis
         }
 
         /// <summary>
-        /// GetNo
+        /// 获取下一个自动编号值
         /// </summary>
-        /// <param name="key"></param>
+        /// <param name="key">键值</param>
         /// <param name="increaseNum">increase num,defalut 1</param>
-        /// <param name="isLock"></param>
+        /// <param name="isLock">使用锁机制获取，防止多个客户端程序并发</param>
         /// <returns></returns>
         public static long GetNextNo(string key, uint increaseNum = 1, bool isLock = false)
         {
@@ -279,12 +282,12 @@ namespace ZyGames.Framework.Redis
         }
 
         /// <summary>
-        /// 
+        /// 获取下一个自动编号值
         /// </summary>
-        /// <param name="redisHost"></param>
-        /// <param name="key"></param>
-        /// <param name="increaseNum"></param>
-        /// <param name="isLock"></param>
+        /// <param name="redisHost">Redis主机地址，format:password@ip:port#db</param>
+        /// <param name="key">键值</param>
+        /// <param name="increaseNum">自动增加步长</param>
+        /// <param name="isLock">使用锁机制获取，防止多个客户端程序并发</param>
         /// <returns></returns>
         public static long GetNextNo(string redisHost, string key, uint increaseNum = 1, bool isLock = false)
         {
@@ -298,7 +301,7 @@ namespace ZyGames.Framework.Redis
         }
 
         /// <summary>
-        /// 
+        /// 设置指定自动编号值
         /// </summary>
         /// <param name="key"></param>
         /// <param name="value"></param>
@@ -313,12 +316,13 @@ namespace ZyGames.Framework.Redis
             });
             return increment;
         }
+
         /// <summary>
-        /// 
+        /// 以事务方式执行
         /// </summary>
-        /// <param name="watchKeys"></param>
-        /// <param name="processFunc"></param>
-        /// <param name="transFunc"></param>
+        /// <param name="watchKeys">事务锁定的Key</param>
+        /// <param name="processFunc">非事务处理的方法</param>
+        /// <param name="transFunc">在事务处理的方法</param>
         /// <returns></returns>
         public static bool ProcessTrans(string watchKeys, Func<RedisClient, bool> processFunc, Action<IRedisTransaction> transFunc)
         {
@@ -326,12 +330,12 @@ namespace ZyGames.Framework.Redis
         }
 
         /// <summary>
-        /// 
+        /// 以事务方式执行
         /// </summary>
-        /// <param name="watchKeys"></param>
-        /// <param name="processFunc"></param>
-        /// <param name="transFunc"></param>
-        /// <param name="errorFunc"></param>
+        /// <param name="watchKeys">事务锁定的Key</param>
+        /// <param name="processFunc">非事务处理的方法</param>
+        /// <param name="transFunc">在事务处理的方法</param>
+        /// <param name="errorFunc">出错处理方法</param>
         public static bool ProcessTrans(string[] watchKeys, Func<RedisClient, bool> processFunc, Action<IRedisTransaction> transFunc, Action<IRedisTransaction, Exception> errorFunc)
         {
             bool result = false;
@@ -343,13 +347,13 @@ namespace ZyGames.Framework.Redis
         }
 
         /// <summary>
-        /// 
+        /// 以事务方式执行
         /// </summary>
-        /// <param name="client"></param>
-        /// <param name="watchKeys"></param>
-        /// <param name="processFunc"></param>
-        /// <param name="transFunc"></param>
-        /// <param name="errorFunc"></param>
+        /// <param name="client">Redis客户端对象</param>
+        /// <param name="watchKeys">事务锁定的Key</param>
+        /// <param name="processFunc">非事务处理的方法</param>
+        /// <param name="transFunc">在事务处理的方法</param>
+        /// <param name="errorFunc">出错处理方法</param>
         /// <returns></returns>
         public static bool ProcessTrans(RedisClient client, string[] watchKeys, Func<bool> processFunc, Action<IRedisTransaction> transFunc, Action<IRedisTransaction, Exception> errorFunc)
         {
@@ -374,7 +378,7 @@ namespace ZyGames.Framework.Redis
         }
 
         /// <summary>
-        /// 
+        /// 以管道方式执行
         /// </summary>
         /// <param name="func"></param>
         /// <param name="pipelineAction"></param>
@@ -400,7 +404,7 @@ namespace ZyGames.Framework.Redis
         }
 
         /// <summary>
-        /// 
+        /// 以管道方式执行
         /// </summary>
         /// <param name="pipelineActions"></param>
         public static IEnumerable<long> ProcessPipeline(params Func<RedisClient, long>[] pipelineActions)
@@ -409,7 +413,7 @@ namespace ZyGames.Framework.Redis
         }
 
         /// <summary>
-        /// 
+        /// 以管道方式执行
         /// </summary>
         /// <param name="action"></param>
         /// <param name="pipelineActions"></param>
@@ -419,12 +423,12 @@ namespace ZyGames.Framework.Redis
         }
 
         /// <summary>
-        /// 
+        /// 以管道方式执行
         /// </summary>
         /// <param name="action"></param>
         /// <param name="pipelineActions"></param>
         /// <param name="setting"></param>
-        public static IEnumerable<long> ProcessPipeline(Action<RedisClient> action, RedisPoolSetting setting, params  Func<RedisClient, long>[] pipelineActions)
+        public static IEnumerable<long> ProcessPipeline(Action<RedisClient> action, RedisPoolSetting setting, params Func<RedisClient, long>[] pipelineActions)
         {
             var client = setting == null ? GetClient() : GetOrAddPool(setting);
             try
@@ -460,9 +464,8 @@ namespace ZyGames.Framework.Redis
             return result;
         }
 
-
         /// <summary>
-        /// 
+        /// 以管道方式执行
         /// </summary>
         /// <param name="func"></param>
         /// <param name="setting"></param>
@@ -499,6 +502,7 @@ namespace ZyGames.Framework.Redis
                 PuttPool(client);
             }
         }
+
         /// <summary>
         /// Process ReadOnly delegate
         /// </summary>
@@ -518,14 +522,13 @@ namespace ZyGames.Framework.Redis
         }
 
         /// <summary>
-        /// 
+        /// 检查连接
         /// </summary>
         /// <returns></returns>
         public static bool CheckConnect()
         {
             return CheckConnect(null);
         }
-
 
         /// <summary>
         /// check connect to redis.
@@ -600,6 +603,7 @@ namespace ZyGames.Framework.Redis
             return GetOrAddPool(_setting);
             //return (RedisClient)_pooledRedis.GetClient();
         }
+
         /// <summary>
         /// Get read only connection
         /// </summary>
@@ -609,8 +613,9 @@ namespace ZyGames.Framework.Redis
             return GetOrAddPool(_setting);
             //return (RedisClient)_pooledRedis.GetReadOnlyClient();
         }
+
         /// <summary>
-        /// 
+        /// 执行结束的客户端回收放入池
         /// </summary>
         /// <param name="client"></param>
         public static void PuttPool(RedisClient client)
@@ -633,7 +638,7 @@ namespace ZyGames.Framework.Redis
         }
 
         /// <summary>
-        /// 
+        /// 从Redis池中获取客户端
         /// </summary>
         /// <param name="hostString"></param>
         /// <param name="db"></param>
@@ -648,8 +653,9 @@ namespace ZyGames.Framework.Redis
             }
             return null;
         }
+
         /// <summary>
-        /// 
+        /// 从Redis池中获取客户端，不存在则增加新的
         /// </summary>
         /// <param name="setting"></param>
         /// <returns></returns>
@@ -662,7 +668,7 @@ namespace ZyGames.Framework.Redis
         }
 
         /// <summary>
-        /// 
+        /// 生成连接池的键格式
         /// </summary>
         /// <param name="host"></param>
         /// <param name="port"></param>
@@ -672,8 +678,9 @@ namespace ZyGames.Framework.Redis
         {
             return string.Format("{0}:{1}#{2}", host, port, db);
         }
+
         /// <summary>
-        /// 
+        /// 生成连接池的键格式
         /// </summary>
         /// <param name="hostString"></param>
         /// <param name="db"></param>
@@ -691,25 +698,14 @@ namespace ZyGames.Framework.Redis
 
         private static RedisClient CreateRedisClient(RedisPoolSetting setting)
         {
-            string[] hostParts;
             RedisClient client = null;
-            if (setting.Host.Contains("@"))
-            {
-                //have password.
-                hostParts = setting.Host.Split('@', ':');
-                client = new RedisClient(hostParts[1], hostParts[2].ToInt(), hostParts[0], setting.DbIndex) { ConnectTimeout = setting.ConnectTimeout };
-            }
-            else
-            {
-                hostParts = setting.Host.Split(':');
-                int port = hostParts.Length > 1 ? hostParts[1].ToInt() : 6379;
-                client = new RedisClient(hostParts[0], port, null, setting.DbIndex) { ConnectTimeout = setting.ConnectTimeout };
-            }
+            string password = string.IsNullOrEmpty(setting.Password) ? null : setting.Password;
+            client = new RedisClient(setting.Host, setting.Port.ToInt(), password, setting.DbIndex) { ConnectTimeout = setting.ConnectTimeout };
             return client;
         }
 
         /// <summary>
-        /// 
+        /// 设置键过期时间，过期后则不能被取出
         /// </summary>
         /// <param name="key"></param>
         /// <param name="value"></param>
@@ -720,7 +716,7 @@ namespace ZyGames.Framework.Redis
         }
 
         /// <summary>
-        /// 
+        /// 设置键过期时间，过期后则不能被取出
         /// </summary>
         /// <param name="keys"></param>
         /// <param name="values"></param>
@@ -763,10 +759,10 @@ namespace ZyGames.Framework.Redis
         }
 
         /// <summary>
-        /// 
+        /// 获取所有的实体对象列表，针对Personal类型的实体
         /// </summary>
         /// <typeparam name="T"></typeparam>
-        /// <param name="personalIds"></param>
+        /// <param name="personalIds">指定的所属私有的Key</param>
         /// <returns></returns>
         public static IEnumerable<T> GetAllEntity<T>(IEnumerable<string> personalIds)
         {
@@ -774,11 +770,11 @@ namespace ZyGames.Framework.Redis
         }
 
         /// <summary>
-        /// 
+        /// 获取所有的实体对象列表，针对Personal类型的实体
         /// </summary>
         /// <typeparam name="T"></typeparam>
-        /// <param name="personalIds"></param>
-        /// <param name="hasMutilKeyIndexs"></param>
+        /// <param name="personalIds">指定的所属私有的Key</param>
+        /// <param name="hasMutilKeyIndexs">实体对象是否包含多个组合主键</param>
         /// <returns></returns>
         public static IEnumerable<T> GetAllEntity<T>(IEnumerable<string> personalIds, bool hasMutilKeyIndexs)
         {
@@ -822,12 +818,12 @@ namespace ZyGames.Framework.Redis
         }
 
         /// <summary>
-        /// Get mutil entity instance from redis, but not surported mutil key of entity.
+        /// 获取所有的实体对象列表, 不能支持多个组合主键的实体.
         /// </summary>
         /// <param name="personalId"></param>
         /// <param name="entityTypes"></param>
         /// <returns></returns>
-        public static object[] GetAllEntity(string personalId, params  Type[] entityTypes)
+        public static object[] GetAllEntity(string personalId, params Type[] entityTypes)
         {
             //todo: trace GetAllEntity
             var watch = RunTimeWatch.StartNew("Get redis data of persionalId:" + personalId);
@@ -896,14 +892,13 @@ namespace ZyGames.Framework.Redis
             return null;
         }
 
-
         /// <summary>
-        /// Try get entity
+        /// 尝试获取实体对象
         /// </summary>
         /// <typeparam name="T"></typeparam>
-        /// <param name="redisKey"></param>
-        /// <param name="table"></param>
-        /// <param name="list"></param>
+        /// <param name="redisKey">实体类型名</param>
+        /// <param name="table">表架构信息</param>
+        /// <param name="list">返回的结果</param>
         /// <returns></returns>
         public static bool TryGetEntity<T>(string redisKey, SchemaTable table, out List<T> list) where T : ISqlEntity
         {
@@ -913,14 +908,15 @@ namespace ZyGames.Framework.Redis
             }
             return TryGetValue(redisKey, table, out list, CurrRedisInfo.ClientVersion >= RedisStorageVersion.HashMutilKeyMap);
         }
+
         /// <summary>
-        /// /
+        /// /尝试获取实体对象
         /// </summary>
         /// <typeparam name="T"></typeparam>
-        /// <param name="redisKey"></param>
-        /// <param name="table"></param>
-        /// <param name="list"></param>
-        /// <param name="hasMutilKeyIndexs">has mutil key map index</param>
+        /// <param name="redisKey">实体类型名</param>
+        /// <param name="table">表架构信息</param>
+        /// <param name="list">返回的结果</param>
+        /// <param name="hasMutilKeyIndexs">实体对象是否包含多个组合主键</param>
         /// <returns></returns>
         private static bool TryGetValue<T>(string redisKey, SchemaTable table, out List<T> list, bool hasMutilKeyIndexs) where T : ISqlEntity
         {
@@ -1079,13 +1075,14 @@ namespace ZyGames.Framework.Redis
         {
             client.SAdd(string.Format("{0}:{1}", hashId, firstKey), secondKeyBytes);
         }
+
         internal static void RemoveMutilKeyMap(RedisClient client, string hashId, string firstKey, params byte[][] secondKeyBytes)
         {
             client.SRem(string.Format("{0}:{1}", hashId, firstKey), secondKeyBytes);
         }
 
         /// <summary>
-        /// update key map
+        /// 更新映射索引键值对
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="client"></param>
@@ -1205,13 +1202,14 @@ namespace ZyGames.Framework.Redis
             bytes = MathUtils.Join(pre, bytes);
             return patterns.Any(pattern => MathUtils.IndexOf(bytes, MathUtils.Join(pre, pattern)) > -1);
         }
+
         /// <summary>
-        /// The object of T isn't changed.
+        /// 尝试交换Rank结构的排名
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="key"></param>
-        /// <param name="t1"></param>
-        /// <param name="t2"></param>
+        /// <param name="t1">被交换的对象</param>
+        /// <param name="t2">交换的对象</param>
         /// <returns></returns>
         public static bool TryExchangeRankEntity<T>(string key, T t1, T t2) where T : RankEntity
         {
@@ -1219,7 +1217,7 @@ namespace ZyGames.Framework.Redis
             var score1 = t1.Score;
             var score2 = t2.Score;
             var buffers = new byte[][]
-            {   
+            {
                 _serializer.Serialize(t1),
                  _serializer.Serialize(t2)
             };
@@ -1231,7 +1229,7 @@ namespace ZyGames.Framework.Redis
         }
 
         /// <summary>
-        /// Only update score, can't update entity object.
+        /// 尝试更新Rank结构的排名，不更新Rank结构的项信息
         /// </summary>
         /// <param name="key"></param>
         /// <param name="dataList"></param>
@@ -1260,7 +1258,7 @@ namespace ZyGames.Framework.Redis
         }
 
         /// <summary>
-        /// Try update entity
+        /// 尝试更新实体对象
         /// </summary>
         /// <param name="dataList"></param>
         /// <returns></returns>
@@ -1333,7 +1331,7 @@ namespace ZyGames.Framework.Redis
         }
 
         /// <summary>
-        /// 
+        /// 以事务的方式更新实体对象
         /// </summary>
         /// <param name="trans"></param>
         /// <param name="dataList"></param>
@@ -1387,7 +1385,7 @@ namespace ZyGames.Framework.Redis
         }
 
         /// <summary>
-        /// 
+        /// 获取实体类型的在Redis中的格式
         /// </summary>
         /// <param name="type"></param>
         /// <returns></returns>
@@ -1398,7 +1396,7 @@ namespace ZyGames.Framework.Redis
         }
 
         /// <summary>
-        /// Get key name of store redis entity 
+        /// 获取实体类型的在Redis中的格式
         /// </summary>
         /// <param name="typeName"></param>
         /// <returns></returns>
@@ -1420,6 +1418,7 @@ namespace ZyGames.Framework.Redis
         {
             return Encoding.UTF8.GetBytes(key);
         }
+
         internal static string ToStringKey(byte[] keyBytes)
         {
             return Encoding.UTF8.GetString(keyBytes);
@@ -1434,6 +1433,7 @@ namespace ZyGames.Framework.Redis
         {
             return typeName.Replace(EntityKeySplitChar, "%11");
         }
+
         /// <summary>
         /// 从Redis的Key转成成TypeName
         /// </summary>

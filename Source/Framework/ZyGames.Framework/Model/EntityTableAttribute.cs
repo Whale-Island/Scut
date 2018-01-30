@@ -21,6 +21,7 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 ****************************************************************************/
+
 using System;
 
 namespace ZyGames.Framework.Model
@@ -38,7 +39,28 @@ namespace ZyGames.Framework.Model
         /// 默认构造配置
         /// </summary>
         public EntityTableAttribute()
-            : this(null, null, 0, null)
+            : this(AccessLevel.ReadWrite, CacheType.None, false, null, null, 0, null)
+        {
+        }
+
+        /// <summary>
+        /// PersonalCacheStruct 需要存储数据库时，使用此配置。
+        /// </summary>
+        /// <param name="connectKey"></param>
+        /// <param name="tableName"></param>
+        /// <param name="periodTime"></param>
+        public EntityTableAttribute(string connectKey, string tableName, int periodTime)
+            : this(AccessLevel.ReadWrite, CacheType.Dictionary, true, connectKey, tableName, periodTime, null)
+        {
+        }
+
+        /// <summary>
+        /// ShareCacheStruct 需要存储数据库时，使用此配置。
+        /// </summary>
+        /// <param name="connectKey"></param>
+        /// <param name="tableName"></param>
+        public EntityTableAttribute(string connectKey, string tableName)
+            : this(AccessLevel.ReadWrite, CacheType.Entity, true, connectKey, tableName, 0, null)
         {
         }
 
@@ -63,15 +85,6 @@ namespace ZyGames.Framework.Model
         /// <param name="periodTime">缓存的生命周期，0：永久</param>
         public EntityTableAttribute(CacheType cacheType, string connectKey, string tableName = "", int periodTime = 0)
             : this(AccessLevel.ReadWrite, cacheType, true, connectKey, tableName, periodTime, null)
-        {
-        }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="connectKey"></param>
-        public EntityTableAttribute(string connectKey)
-            : this(AccessLevel.ReadWrite, connectKey)
         {
         }
 
@@ -127,7 +140,10 @@ namespace ZyGames.Framework.Model
         /// </summary>
         public AccessLevel AccessLevel
         {
-            get { return _accessLevel; }
+            get
+            {
+                return _accessLevel;
+            }
             set
             {
                 _accessLevel = value;
@@ -234,6 +250,7 @@ namespace ZyGames.Framework.Model
         /// index column
         /// </summary>
         public string[] Indexs { get; set; }
+
         /// <summary>
         /// 条件，不需要加Where
         /// </summary>
@@ -242,6 +259,7 @@ namespace ZyGames.Framework.Model
             get;
             set;
         }
+
         /// <summary>
         /// 排序列,多个以逗号分隔
         /// </summary>

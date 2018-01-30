@@ -21,6 +21,7 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 ****************************************************************************/
+
 using System;
 using System.Collections.Concurrent;
 using ZyGames.Framework.Common;
@@ -38,53 +39,63 @@ namespace ZyGames.Framework.Data
         /// 未知
         /// </summary>
         UnKown = 0,
+
         /// <summary>
         /// 配置
         /// </summary>
         Config,
+
         /// <summary>
         /// 游戏
         /// </summary>
         Game,
+
         /// <summary>
         /// 日志
         /// </summary>
         Log,
+
         /// <summary>
         /// 本机的Sql数据服务
         /// </summary>
         LocalSql,
+
         /// <summary>
         /// 本机的MySql数据服务
         /// </summary>
         LocalMySql,
     }
+
     /// <summary>
     /// 数据提供者类型
     /// </summary>
     public enum DbProviderType
     {
         /// <summary>
-        /// 
+        ///
         /// </summary>
         Unkown = 0,
+
         /// <summary>
-        /// 
+        ///
         /// </summary>
         MsSql = 1,
+
         /// <summary>
-        /// 
+        ///
         /// </summary>
         MySql
     }
+
     /// <summary>
     /// Connection setting.
     /// </summary>
     public class ConnectionSetting
     {
         private static ConcurrentDictionary<string, ConnectionSetting> _settings = new ConcurrentDictionary<string, ConnectionSetting>();
+
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="providerName"></param>
         /// <param name="providerTypeName"></param>
@@ -135,7 +146,7 @@ namespace ZyGames.Framework.Data
             Initializer();
         }
 
-        void Initializer()
+        private void Initializer()
         {
             string[] items = ConnectionString.Split(';');
             foreach (var item in items)
@@ -207,7 +218,7 @@ namespace ZyGames.Framework.Data
         public string ProviderName { get; private set; }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         public DbProviderType ProviderType { get; private set; }
 
@@ -222,7 +233,7 @@ namespace ZyGames.Framework.Data
         public string CharSet { get; private set; }
 
         /// <summary>
-        /// 
+        /// 配置数据连接的等级
         /// </summary>
         public DbLevel DbLevel { get; private set; }
 
@@ -245,6 +256,7 @@ namespace ZyGames.Framework.Data
             get;
             private set;
         }
+
         /// <summary>
         /// Gets or sets the name of the data base.
         /// </summary>

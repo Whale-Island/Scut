@@ -32,16 +32,15 @@ namespace ZyGames.Framework.Net
     public class DbDataFilter
     {
         /// <summary>
-        /// 
+        ///
         /// </summary>
         public DbDataFilter()
         {
             Parameters = new Parameters();
         }
 
-
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="capacity"></param>
         public DbDataFilter(int capacity)
@@ -52,7 +51,7 @@ namespace ZyGames.Framework.Net
         }
 
         /// <summary>
-        /// 获取结果的容量
+        /// 获取结果的容量，0不限制
         /// </summary>
         public int Capacity
         {
@@ -61,7 +60,7 @@ namespace ZyGames.Framework.Net
         }
 
         /// <summary>
-        /// 获取或设置条件
+        /// 获取或设置where条件
         /// </summary>
         public string Condition
         {

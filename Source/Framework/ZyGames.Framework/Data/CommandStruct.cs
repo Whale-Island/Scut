@@ -21,6 +21,7 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 ****************************************************************************/
+
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -42,23 +43,24 @@ namespace ZyGames.Framework.Data
         protected HashSet<string> _increaseFields = new HashSet<string>();
 
         /// <summary>
-        /// 
+        /// init
         /// </summary>
-        /// <param name="tableName"></param>
-        /// <param name="editType"></param>
-        /// <param name="columns"></param>
+        /// <param name="tableName">表名</param>
+        /// <param name="editType">命令操作类型</param>
+        /// <param name="columns">查询命令的列名，以逗号分隔</param>
         public CommandStruct(string tableName, CommandMode editType, string columns = "")
             : this(tableName, editType, new CommandFilter(), columns)
         {
 
         }
+
         /// <summary>
-        /// 
+        ///
         /// </summary>
-        /// <param name="tableName"></param>
-        /// <param name="editType"></param>
-        /// <param name="columns">Inquiry table columns</param>
-        /// <param name="filter"></param>
+        /// <param name="tableName">表名</param>
+        /// <param name="editType">命令操作类型</param>
+        /// <param name="filter">where条件过滤器对象</param>
+        /// <param name="columns">查询命令的列名，以逗号分隔</param>
         public CommandStruct(string tableName, CommandMode editType, CommandFilter filter, string columns = "")
         {
             TableName = tableName;
@@ -77,7 +79,7 @@ namespace ZyGames.Framework.Data
         private string _tableName;
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         public string TableName
         {
@@ -86,7 +88,7 @@ namespace ZyGames.Framework.Data
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         public CommandMode EntityType
         {
@@ -97,7 +99,7 @@ namespace ZyGames.Framework.Data
         private string _columns;
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         public string Columns
         {
@@ -106,7 +108,7 @@ namespace ZyGames.Framework.Data
         }
 
         /// <summary>
-        /// Set top record.
+        /// 设置Sql结果显示前多少条记录
         /// </summary>
         public int Top
         {
@@ -145,7 +147,7 @@ namespace ZyGames.Framework.Data
         }
 
         /// <summary>
-        /// 
+        /// 设置查询命令带分页
         /// </summary>
         /// <param name="page"></param>
         /// <param name="pageSize"></param>
@@ -159,10 +161,10 @@ namespace ZyGames.Framework.Data
         }
 
         /// <summary>
-        /// 
+        /// 增加主键
         /// </summary>
         /// <param name="parameter"></param>
-        /// <param name="isIdentity">key is auto increase</param>
+        /// <param name="isIdentity">主键列是否自动自增</param>
         public void AddKey(IDataParameter parameter, bool isIdentity)
         {
             if (parameter == null)
@@ -180,24 +182,27 @@ namespace ZyGames.Framework.Data
             }
             if (isIdentity) _increaseFields.Add(paramKey);
         }
+
         /// <summary>
-        /// 
+        /// 获取或设置where条件
         /// </summary>
         public CommandFilter Filter
         {
             get;
             set;
         }
+
         /// <summary>
-        /// 
+        /// 获取Sql语句
         /// </summary>
         public string Sql
         {
             get;
             protected set;
         }
+
         /// <summary>
-        /// 
+        /// 获取Sql语句的参数
         /// </summary>
         public IDataParameter[] Parameters
         {
@@ -206,7 +211,7 @@ namespace ZyGames.Framework.Data
         }
 
         /// <summary>
-        /// 
+        /// 不使用
         /// </summary>
         [Obsolete]
         public SqlParameter[] SqlParameters
@@ -223,38 +228,38 @@ namespace ZyGames.Framework.Data
         }
 
         /// <summary>
-        /// 
+        /// 添加表达式
         /// </summary>
-        /// <param name="express"></param>
+        /// <param name="express">自定的表达式</param>
         public void AddExpress(string express)
         {
             _expressList.Add(express);
         }
 
         /// <summary>
-        /// 
+        /// 添加表达式语句
         /// </summary>
-        /// <param name="paramName"></param>
-        /// <param name="value"></param>
+        /// <param name="paramName">不带@参数名</param>
+        /// <param name="value">参数值</param>
         public virtual void AddExpressParam(string paramName, object value)
         {
             AddExpressParam(SqlParamHelper.MakeInParam(paramName, value));
         }
 
         /// <summary>
-        /// 
+        /// 添加表达式语句
         /// </summary>
-        /// <param name="paramName"></param>
-        /// <param name="dbType"></param>
-        /// <param name="size"></param>
-        /// <param name="value"></param>
+        /// <param name="paramName">不带@参数名</param>
+        /// <param name="dbType">字段的类型</param>
+        /// <param name="size">字段的大小</param>
+        /// <param name="value">参数值</param>
         protected virtual void AddExpressParam(string paramName, int dbType, int size, object value)
         {
             AddExpressParam(SqlParamHelper.MakeInParam(paramName, (SqlDbType)dbType, size, value));
         }
 
         /// <summary>
-        /// 
+        /// 添加表达式语句
         /// </summary>
         /// <param name="param"></param>
         public void AddExpressParam(IDataParameter param)
@@ -281,7 +286,7 @@ namespace ZyGames.Framework.Data
         }
 
         /// <summary>
-        /// 
+        /// 不使用
         /// </summary>
         /// <param name="field"></param>
         /// <param name="sqlDbType"></param>
@@ -304,7 +309,7 @@ namespace ZyGames.Framework.Data
         }
 
         /// <summary>
-        /// 
+        /// 不使用
         /// </summary>
         /// <param name="field"></param>
         /// <param name="sqlDbType"></param>
@@ -317,7 +322,7 @@ namespace ZyGames.Framework.Data
         }
 
         /// <summary>
-        /// 
+        /// 增加guid类型的参数
         /// </summary>
         /// <param name="paramName"></param>
         /// <param name="value"></param>
@@ -328,7 +333,7 @@ namespace ZyGames.Framework.Data
         }
 
         /// <summary>
-        /// 
+        /// 增加text类型的参数
         /// </summary>
         /// <param name="paramName"></param>
         /// <param name="value"></param>
@@ -359,7 +364,6 @@ namespace ZyGames.Framework.Data
         {
             return _increaseFields.Contains(field);
         }
-
 
         /// <summary>
         /// 添加参数
@@ -417,6 +421,7 @@ namespace ZyGames.Framework.Data
             }
             IsGenerated = true;
         }
+
         /// <summary>
         /// Parsers the inquiry.
         /// </summary>
@@ -479,7 +484,7 @@ namespace ZyGames.Framework.Data
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         protected virtual void ParserInsert()
         {
@@ -525,9 +530,8 @@ namespace ZyGames.Framework.Data
                     ReturnIdentity ? ";SELECT @@IDENTITY;" : "");
         }
 
-
         /// <summary>
-        /// 
+        ///
         /// </summary>
         protected virtual void ParserUpdateInsert()
         {
@@ -615,6 +619,7 @@ namespace ZyGames.Framework.Data
             //TraceLog.WriteComplement(Sql);
             Parameters = updateFieldParams.ToArray();
         }
+
         /// <summary>
         /// Appends to data parameter.
         /// </summary>
@@ -627,6 +632,7 @@ namespace ZyGames.Framework.Data
                 paramList.Add(dataParameter);
             }
         }
+
         /// <summary>
         /// Formats the update insert sql.
         /// </summary>
@@ -647,6 +653,7 @@ INSERT INTO {0}({3})VALUES({4})",
                                 insertFields,
                                 insertValues);
         }
+
         /// <summary>
         /// Parsers the update.
         /// </summary>
@@ -689,6 +696,7 @@ INSERT INTO {0}({3})VALUES({4})",
             Sql = string.Format("UPDATE {0} SET {1} {2}", TableName, string.Join(",", updateFieldNames.ToArray()), condition);
             Parameters = updateFieldParams.ToArray();
         }
+
         /// <summary>
         /// Parsers the delete.
         /// </summary>
@@ -724,7 +732,7 @@ INSERT INTO {0}({3})VALUES({4})",
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="name"></param>
         /// <returns></returns>

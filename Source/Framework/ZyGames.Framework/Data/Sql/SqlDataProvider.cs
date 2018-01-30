@@ -21,6 +21,7 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 ****************************************************************************/
+
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -38,7 +39,7 @@ namespace ZyGames.Framework.Data.Sql
     public class SqlDataProvider : DbBaseProvider
     {
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="connectionSetting">connection setting</param>
         public SqlDataProvider(ConnectionSetting connectionSetting)
@@ -47,7 +48,7 @@ namespace ZyGames.Framework.Data.Sql
         }
 
         /// <summary>
-        /// 
+        /// 清理数据库连接池对象
         /// </summary>
         public override void ClearAllPools()
         {
@@ -62,7 +63,7 @@ namespace ZyGames.Framework.Data.Sql
         }
 
         /// <summary>
-        /// 
+        /// 检查连接
         /// </summary>
         public override void CheckConnect()
         {
@@ -73,7 +74,7 @@ namespace ZyGames.Framework.Data.Sql
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="commandType"></param>
         /// <param name="commandTimeout"></param>
@@ -86,7 +87,7 @@ namespace ZyGames.Framework.Data.Sql
             try
             {
                 conn.Open();
-        }
+            }
             catch (Exception ex)
             {
                 throw new DbConnectionException(ex.Message, ex);
@@ -103,7 +104,7 @@ namespace ZyGames.Framework.Data.Sql
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="commandType"></param>
         /// <param name="commandTimeout"></param>
@@ -119,7 +120,7 @@ namespace ZyGames.Framework.Data.Sql
                 {
                     result = SqlHelper.ExecuteScalar(conn, commandType, commandText, ConvertParam<SqlParameter>(parameters));
                     return;
-        }
+                }
                 using (var cmd = CreateSqlCommand(conn, null, commandTimeout, commandText))
                 {
                     result = cmd.ExecuteScalar();
@@ -129,7 +130,7 @@ namespace ZyGames.Framework.Data.Sql
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="commandType"></param>
         /// <param name="commandTimeout"></param>
@@ -145,7 +146,7 @@ namespace ZyGames.Framework.Data.Sql
                 {
                     result = SqlHelper.ExecuteNonQuery(conn, commandType, commandText, ConvertParam<SqlParameter>(parameters));
                     return;
-        }
+                }
                 using (var cmd = CreateSqlCommand(conn, null, commandTimeout, commandText))
                 {
                     result = cmd.ExecuteNonQuery();
@@ -153,7 +154,6 @@ namespace ZyGames.Framework.Data.Sql
             });
             return result;
         }
-
 
         private static SqlCommand CreateSqlCommand(SqlConnection connection, SqlTransaction transaction, int? commandTimeout, string commandText)
         {
@@ -168,7 +168,6 @@ namespace ZyGames.Framework.Data.Sql
             }
             return cmd;
         }
-
 
         private void OpenConnection(Action<SqlConnection> action)
         {
@@ -185,8 +184,9 @@ namespace ZyGames.Framework.Data.Sql
                 action(conn);
             }
         }
+
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="commands"></param>
         /// <returns></returns>
@@ -212,7 +212,7 @@ namespace ZyGames.Framework.Data.Sql
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="identityId"></param>
         /// <param name="commandType"></param>
@@ -232,8 +232,9 @@ namespace ZyGames.Framework.Data.Sql
             statement.Params = SqlStatementManager.ConvertSqlParam(parameters);
             return SqlStatementManager.Put(statement) ? 1 : 0;
         }
+
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="identityId"></param>
         /// <param name="command"></param>
@@ -263,7 +264,7 @@ namespace ZyGames.Framework.Data.Sql
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="tableName"></param>
         /// <param name="columns"></param>
@@ -274,46 +275,46 @@ namespace ZyGames.Framework.Data.Sql
             var list = new List<DbColumn>();
             OpenConnection(conn =>
             {
-            string commandText = string.Format("SELECT count(*) FROM sys.objects WHERE object_id = OBJECT_ID(N'{0}') AND type in (N'U')", tableName);
+                string commandText = string.Format("SELECT count(*) FROM sys.objects WHERE object_id = OBJECT_ID(N'{0}') AND type in (N'U')", tableName);
                 if (SqlHelper.ExecuteScalar(conn, CommandType.Text, commandText).ToInt() > 0)
-            {
+                {
                     commandText = string.Format(@"
-select 
-  c.name as ColumnName, 
-  (select top 1 name from systypes where xtype=c.xtype) as ColumnType, 
-  isnull(c.scale,0) as scale, 
+select
+  c.name as ColumnName,
+  (select top 1 name from systypes where xtype=c.xtype) as ColumnType,
+  isnull(c.scale,0) as scale,
   c.length,
   c.isnullable,
   isnull((select top 1 k.keyno from sysobjects o, sysindexkeys k, sysindexes i
     where o.xtype='PK' and o.parent_obj=c.id and k.id=c.id and k.colid=c.colid and i.id=c.id and o.name=i.name and k.indid=i.indid),0) as keyno,
   isnull((select top 1 1 from sysobjects where xtype = 'U' and columnproperty(c.id, c.name, 'IsIdentity') = 1 and id=c.id),0) as auto_increment
-from syscolumns c 
+from syscolumns c
 where c.id=object_id('{0}')
 order by colorder ASC
 ", tableName);
 
                     using (var dataReader = SqlHelper.ExecuteReader(conn, CommandType.Text, commandText))
-                {
-                    while (dataReader.Read())
                     {
-                        var column = new DbColumn();
-                        column.Name = dataReader[0].ToNotNullString();
-                        column.DbType = dataReader[1].ToNotNullString();
-                        column.Scale = dataReader[2].ToInt();
-                        column.Length = dataReader[3].ToLong();
+                        while (dataReader.Read())
+                        {
+                            var column = new DbColumn();
+                            column.Name = dataReader[0].ToNotNullString();
+                            column.DbType = dataReader[1].ToNotNullString();
+                            column.Scale = dataReader[2].ToInt();
+                            column.Length = dataReader[3].ToLong();
                             column.Isnullable = dataReader[4].ToBool();
                             column.KeyNo = dataReader[5].ToInt();
                             column.HaveIncrement = dataReader["auto_increment"].ToBool();
-                        column.Type = ConvertToObjectType(ConvertToDbType(column.DbType));
-                        list.Add(column);
+                            column.Type = ConvertToObjectType(ConvertToDbType(column.DbType));
+                            list.Add(column);
+                        }
                     }
-                }
                     result = true;
                 }
             });
-                columns = list.ToArray();
+            columns = list.ToArray();
             return result;
-            }
+        }
 
         private Type ConvertToObjectType(SqlDbType toEnum)
         {
@@ -537,12 +538,11 @@ order by colorder ASC
                     : "VarChar(255)";
             }
 
-
             return "sql_variant";
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="tableName"></param>
         /// <param name="columns"></param>
@@ -581,7 +581,7 @@ order by colorder ASC
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="tableName"></param>
         /// <param name="indexs"></param>
@@ -645,9 +645,8 @@ order by colorder ASC
             return index > 0;
         }
 
-
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="tableName"></param>
         /// <param name="columns"></param>
@@ -657,86 +656,86 @@ order by colorder ASC
             StringBuilder command = new StringBuilder();
             OpenConnection(conn =>
             {
-            try
-            {
-                string dbTableName = FormatName(tableName);
-                command.AppendFormat("Alter Table {0}", dbTableName);
-                command.AppendLine(" Add");
-                List<string> keys;
-                List<string> uniques;
-                bool hasColumn = CheckProcessColumns(command, columns, out keys, out uniques);
-                command.Append(";");
-                if (hasColumn)
+                try
                 {
+                    string dbTableName = FormatName(tableName);
+                    command.AppendFormat("Alter Table {0}", dbTableName);
+                    command.AppendLine(" Add");
+                    List<string> keys;
+                    List<string> uniques;
+                    bool hasColumn = CheckProcessColumns(command, columns, out keys, out uniques);
+                    command.Append(";");
+                    if (hasColumn)
+                    {
                         SqlHelper.ExecuteNonQuery(conn, CommandType.Text, command.ToString());
-                }
+                    }
 
-                command.Clear();
-                List<DbColumn> keyColumns = new List<DbColumn>();
-                int index = 0;
-                foreach (var dbColumn in columns)
-                {
-                    if (!dbColumn.IsModify)
+                    command.Clear();
+                    List<DbColumn> keyColumns = new List<DbColumn>();
+                    int index = 0;
+                    foreach (var dbColumn in columns)
                     {
-                        continue;
+                        if (!dbColumn.IsModify)
+                        {
+                            continue;
+                        }
+                        if (dbColumn.IsKey)
+                        {
+                            keyColumns.Add(dbColumn);
+                            continue;
+                        }
+                        if (index > 0)
+                        {
+                            command.AppendLine("");
+                        }
+                        command.AppendFormat("Alter Table {0} ALTER COLUMN {1} {2}{3}{4};",
+                                             dbTableName,
+                                             FormatName(dbColumn.Name),
+                                             ConvertToDbType(dbColumn.Type, dbColumn.DbType, dbColumn.Length, dbColumn.Scale, dbColumn.IsKey),
+                                             dbColumn.Isnullable ? "" : " not null",
+                                             (dbColumn.IsIdentity ? dbColumn.IdentityNo > 0 ? string.Format(" IDENTITY({0},1)", dbColumn.IdentityNo) : " IDENTITY(1,1)" : ""));
+                        index++;
                     }
-                    if (dbColumn.IsKey)
+                    if (keyColumns.Count > 0)
                     {
-                        keyColumns.Add(dbColumn);
-                        continue;
-                    }
-                    if (index > 0)
-                    {
-                        command.AppendLine("");
-                    }
-                    command.AppendFormat("Alter Table {0} ALTER COLUMN {1} {2}{3}{4};",
-                                         dbTableName,
-                                         FormatName(dbColumn.Name),
-                                         ConvertToDbType(dbColumn.Type, dbColumn.DbType, dbColumn.Length, dbColumn.Scale, dbColumn.IsKey),
-                                         dbColumn.Isnullable ? "" : " not null",
-                                         (dbColumn.IsIdentity ? dbColumn.IdentityNo > 0 ? string.Format(" IDENTITY({0},1)", dbColumn.IdentityNo) : " IDENTITY(1,1)" : ""));
-                    index++;
-                }
-                if (keyColumns.Count > 0)
-                {
-                    string[] keyArray = new string[keyColumns.Count];
+                        string[] keyArray = new string[keyColumns.Count];
                         if (keyColumns.Any(t => t.KeyNo > 0))
                         {
                             //check haved key in db table
                             command.AppendFormat("ALTER TABLE {0} DROP CONSTRAINT PK_{1};", dbTableName, tableName);
                             command.AppendLine();
                         }
-                    int i = 0;
-                    foreach (var keyColumn in keyColumns)
-                    {
-                        keyArray[i] = FormatName(keyColumn.Name);
-                        command.AppendFormat("Alter Table {0} ALTER COLUMN {1} {2} not null;",
-                                             dbTableName,
-                                             FormatName(keyColumn.Name),
-                                             ConvertToDbType(keyColumn.Type, keyColumn.DbType, keyColumn.Length, keyColumn.Scale, keyColumn.IsKey));
-                        command.AppendLine();
-                        i++;
-                        index++;
+                        int i = 0;
+                        foreach (var keyColumn in keyColumns)
+                        {
+                            keyArray[i] = FormatName(keyColumn.Name);
+                            command.AppendFormat("Alter Table {0} ALTER COLUMN {1} {2} not null;",
+                                                 dbTableName,
+                                                 FormatName(keyColumn.Name),
+                                                 ConvertToDbType(keyColumn.Type, keyColumn.DbType, keyColumn.Length, keyColumn.Scale, keyColumn.IsKey));
+                            command.AppendLine();
+                            i++;
+                            index++;
+                        }
+                        command.AppendFormat("ALTER TABLE {0} ADD CONSTRAINT PK_{1} PRIMARY KEY({2});",
+                            dbTableName,
+                            tableName,
+                            FormatQueryColumn(",", keyArray));
                     }
-                    command.AppendFormat("ALTER TABLE {0} ADD CONSTRAINT PK_{1} PRIMARY KEY({2});",
-                        dbTableName,
-                        tableName,
-                        FormatQueryColumn(",", keyArray));
-                }
-                if (index > 0)
-                {
+                    if (index > 0)
+                    {
                         SqlHelper.ExecuteNonQuery(conn, CommandType.Text, command.ToString());
+                    }
                 }
-            }
-            catch (Exception ex)
-            {
-                throw new Exception(string.Format("Execute sql error:{0}", command), ex);
-            }
+                catch (Exception ex)
+                {
+                    throw new Exception(string.Format("Execute sql error:{0}", command), ex);
+                }
             });
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="paramName"></param>
         /// <param name="value"></param>
@@ -747,7 +746,7 @@ order by colorder ASC
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="paramName"></param>
         /// <param name="dbType"></param>
@@ -758,8 +757,9 @@ order by colorder ASC
         {
             return SqlParamHelper.MakeInParam(paramName, (SqlDbType)dbType, size, value);
         }
+
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="paramName"></param>
         /// <param name="value"></param>
@@ -768,8 +768,9 @@ order by colorder ASC
         {
             return SqlParamHelper.MakeInParam(paramName, SqlDbType.UniqueIdentifier, 0, value);
         }
+
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="paramName"></param>
         /// <param name="value"></param>
@@ -780,7 +781,7 @@ order by colorder ASC
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="paramName"></param>
         /// <param name="value"></param>
@@ -789,8 +790,9 @@ order by colorder ASC
         {
             return SqlParamHelper.MakeInParam(paramName, SqlDbType.Text, 0, value);
         }
+
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="paramName"></param>
         /// <param name="value"></param>
@@ -799,8 +801,9 @@ order by colorder ASC
         {
             return SqlParamHelper.MakeInParam(paramName, SqlDbType.Image, 0, value);
         }
+
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="paramName"></param>
         /// <param name="value"></param>
@@ -821,6 +824,7 @@ order by colorder ASC
         {
             return new CommandStruct(tableName, editType, columns);
         }
+
         /// <summary>
         /// 创建CommandFilter对象
         /// </summary>
@@ -841,6 +845,7 @@ order by colorder ASC
         {
             return SqlParamHelper.FormatFilterParam(fieldName, compareChar, paramName);
         }
+
         /// <summary>
         /// 格式化Select语句中的列名
         /// </summary>
@@ -853,7 +858,7 @@ order by colorder ASC
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="name"></param>
         /// <returns></returns>

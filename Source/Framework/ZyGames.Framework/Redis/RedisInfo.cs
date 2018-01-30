@@ -21,12 +21,9 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 ****************************************************************************/
+
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using ZyGames.Framework.Common.Serialization;
 
 namespace ZyGames.Framework.Redis
 {
@@ -36,13 +33,14 @@ namespace ZyGames.Framework.Redis
     public class RedisInfo
     {
         /// <summary>
-        /// 
+        ///
         /// </summary>
         public RedisInfo()
         {
             ClientVersion = RedisStorageVersion.Hash;
             SlaveSet = new Dictionary<string, RedisInfo>();
         }
+
         /// <summary>
         /// Server info hash
         /// </summary>
@@ -54,25 +52,27 @@ namespace ZyGames.Framework.Redis
         public RedisStorageVersion ClientVersion { get; set; }
 
         /// <summary>
-        /// 
+        /// 使用Redis的服务器主机
         /// </summary>
         public string ServerHost { get; set; }
 
         /// <summary>
-        /// 
+        /// 使用Redis的服务器所在物理路径
         /// </summary>
         public string ServerPath { get; set; }
+
         /// <summary>
-        /// 
+        /// 使用Redis的数据序列化类型
         /// </summary>
         public string SerializerType { get; set; }
 
         /// <summary>
-        /// 
+        /// 使用Redis的服务器启动时间
         /// </summary>
         public DateTime StarTime { get; set; }
+
         /// <summary>
-        /// 
+        /// 使用Redis的服务器的子群集服务器
         /// </summary>
         public Dictionary<string, RedisInfo> SlaveSet { get; set; }
 

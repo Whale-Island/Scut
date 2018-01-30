@@ -21,13 +21,14 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 ****************************************************************************/
+
+using MySql.Data.MySqlClient;
 using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using System.Text;
 using ZyGames.Framework.Common;
-using MySql.Data.MySqlClient;
 using ZyGames.Framework.Common.Log;
 
 namespace ZyGames.Framework.Data.MySql
@@ -38,7 +39,7 @@ namespace ZyGames.Framework.Data.MySql
     public class MySqlDataProvider : DbBaseProvider
     {
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="connectionSetting">connection setting.</param>
         public MySqlDataProvider(ConnectionSetting connectionSetting)
@@ -46,9 +47,8 @@ namespace ZyGames.Framework.Data.MySql
         {
         }
 
-
         /// <summary>
-        /// 
+        ///
         /// </summary>
         public override void ClearAllPools()
         {
@@ -63,7 +63,7 @@ namespace ZyGames.Framework.Data.MySql
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         public override void CheckConnect()
         {
@@ -74,7 +74,7 @@ namespace ZyGames.Framework.Data.MySql
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="commandType"></param>
         /// <param name="commandTimeout"></param>
@@ -87,7 +87,7 @@ namespace ZyGames.Framework.Data.MySql
             try
             {
                 conn.Open();
-        }
+            }
             catch (Exception ex)
             {
                 throw new DbConnectionException(ex.Message, ex);
@@ -96,9 +96,8 @@ namespace ZyGames.Framework.Data.MySql
             return DoExecuteReader(conn, null, commandTimeout, commandText, false, ConvertParam<MySqlParameter>(parameters));
         }
 
-
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="commandType"></param>
         /// <param name="commandTimeout"></param>
@@ -114,7 +113,7 @@ namespace ZyGames.Framework.Data.MySql
                 {
                     result = MySqlHelper.ExecuteScalar(conn, commandText, ConvertParam<MySqlParameter>(parameters));
                     return;
-        }
+                }
                 using (var mySqlCommand = CreateMySqlCommand(conn, null, commandTimeout, commandText))
                 {
                     result = mySqlCommand.ExecuteScalar();
@@ -124,7 +123,7 @@ namespace ZyGames.Framework.Data.MySql
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="commandType"></param>
         /// <param name="commandTimeout"></param>
@@ -141,7 +140,7 @@ namespace ZyGames.Framework.Data.MySql
                 {
                     result = MySqlHelper.ExecuteNonQuery(conn, commandText, ConvertParam<MySqlParameter>(parameters));
                     return;
-        }
+                }
                 using (var mySqlCommand = CreateMySqlCommand(conn, null, commandTimeout, commandText))
                 {
                     result = mySqlCommand.ExecuteNonQuery();
@@ -190,7 +189,6 @@ namespace ZyGames.Framework.Data.MySql
             return cmd;
         }
 
-
         private void OpenConnection(Action<MySqlConnection> action)
         {
             using (MySqlConnection conn = new MySqlConnection(ConnectionString))
@@ -206,8 +204,9 @@ namespace ZyGames.Framework.Data.MySql
                 action(conn);
             }
         }
+
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="commands"></param>
         /// <returns></returns>
@@ -232,7 +231,7 @@ namespace ZyGames.Framework.Data.MySql
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="identityId"></param>
         /// <param name="commandType"></param>
@@ -252,8 +251,9 @@ namespace ZyGames.Framework.Data.MySql
             statement.Params = SqlStatementManager.ConvertSqlParam(parameters);
             return SqlStatementManager.Put(statement) ? 1 : 0;
         }
+
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="identityId"></param>
         /// <param name="command"></param>
@@ -273,7 +273,7 @@ namespace ZyGames.Framework.Data.MySql
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="tableName"></param>
         /// <param name="columns"></param>
@@ -315,9 +315,9 @@ namespace ZyGames.Framework.Data.MySql
                 }
                 result = true;
             });
-                columns = list.ToArray();
+            columns = list.ToArray();
             return result;
-            }
+        }
 
         private Type ConvertToObjectType(MySqlDbType toEnum)
         {
@@ -438,7 +438,7 @@ namespace ZyGames.Framework.Data.MySql
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="type"></param>
         /// <param name="dbType">ColumnDbType枚举类型</param>
@@ -524,7 +524,7 @@ namespace ZyGames.Framework.Data.MySql
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="tableName"></param>
         /// <param name="columns"></param>
@@ -568,7 +568,7 @@ namespace ZyGames.Framework.Data.MySql
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="tableName"></param>
         /// <param name="indexs"></param>
@@ -634,9 +634,8 @@ namespace ZyGames.Framework.Data.MySql
             return index > 0;
         }
 
-
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="tableName"></param>
         /// <param name="columns"></param>
@@ -646,90 +645,90 @@ namespace ZyGames.Framework.Data.MySql
             StringBuilder command = new StringBuilder();
             OpenConnection(conn =>
             {
-            try
-            {
-                string dbTableName = FormatName(tableName);
-                command.AppendFormat("ALTER TABLE {0}", dbTableName);
-                command.AppendLine(" ADD COLUMN (");
-                List<string> keys;
-                List<string> uniques;
-                int identityNo;
-                bool hasColumn = CheckProcessColumns(command, columns, out keys, out uniques, out identityNo);
-                command.Append(");");
-                if (hasColumn)
+                try
                 {
+                    string dbTableName = FormatName(tableName);
+                    command.AppendFormat("ALTER TABLE {0}", dbTableName);
+                    command.AppendLine(" ADD COLUMN (");
+                    List<string> keys;
+                    List<string> uniques;
+                    int identityNo;
+                    bool hasColumn = CheckProcessColumns(command, columns, out keys, out uniques, out identityNo);
+                    command.Append(");");
+                    if (hasColumn)
+                    {
                         MySqlHelper.ExecuteNonQuery(conn, command.ToString());
-                    if (identityNo > 0)
-                    {
+                        if (identityNo > 0)
+                        {
                             MySqlHelper.ExecuteNonQuery(conn, string.Format("ALTER TABLE {0} AUTO_INCREMENT={1};", dbTableName, identityNo));
+                        }
                     }
-                }
 
-                command.Clear();
-                List<DbColumn> keyColumns = new List<DbColumn>();
-                int index = 0;
-                foreach (var dbColumn in columns)
-                {
-                    if (!dbColumn.IsModify)
+                    command.Clear();
+                    List<DbColumn> keyColumns = new List<DbColumn>();
+                    int index = 0;
+                    foreach (var dbColumn in columns)
                     {
-                        continue;
+                        if (!dbColumn.IsModify)
+                        {
+                            continue;
+                        }
+                        if (dbColumn.IsKey)
+                        {
+                            keyColumns.Add(dbColumn);
+                            continue;
+                        }
+                        if (index > 0)
+                        {
+                            command.AppendLine("");
+                        }
+                        //ALTER TABLE `test`.`tb1`     CHANGE `Id4` `Id4t` BIGINT(20) NULL ;
+                        command.AppendFormat("ALTER TABLE {0} CHANGE {1} {1} {2} {3};",
+                                             dbTableName,
+                                             FormatName(dbColumn.Name),
+                                             ConvertToDbType(dbColumn.Type, dbColumn.DbType, dbColumn.Length, dbColumn.Scale, dbColumn.IsKey, dbColumn.Name),
+                                             dbColumn.Isnullable ? "" : " NOT NULL");
+                        index++;
                     }
-                    if (dbColumn.IsKey)
+                    //此处MySQL的处理主键方式不太一样
+                    if (keyColumns.Count > 0)
                     {
-                        keyColumns.Add(dbColumn);
-                        continue;
-                    }
-                    if (index > 0)
-                    {
-                        command.AppendLine("");
-                    }
-                    //ALTER TABLE `test`.`tb1`     CHANGE `Id4` `Id4t` BIGINT(20) NULL ;
-                    command.AppendFormat("ALTER TABLE {0} CHANGE {1} {1} {2} {3};",
-                                         dbTableName,
-                                         FormatName(dbColumn.Name),
-                                         ConvertToDbType(dbColumn.Type, dbColumn.DbType, dbColumn.Length, dbColumn.Scale, dbColumn.IsKey, dbColumn.Name),
-                                         dbColumn.Isnullable ? "" : " NOT NULL");
-                    index++;
-                }
-                //此处MySQL的处理主键方式不太一样
-                if (keyColumns.Count > 0)
-                {
-                    string[] keyArray = new string[keyColumns.Count];
+                        string[] keyArray = new string[keyColumns.Count];
                         if (keyColumns.Any(t => t.KeyNo > 0))
                         {
                             //check haved key in db table
                             command.AppendFormat("ALTER TABLE {0} DROP PRIMARY KEY;", dbTableName);
                             command.AppendLine();
                         }
-                    int i = 0;
-                    foreach (var keyColumn in keyColumns)
-                    {
-                        keyArray[i] = FormatName(keyColumn.Name);
-                        command.AppendFormat("ALTER TABLE {0} CHANGE {1} {1} {2} not null;",
-                                             dbTableName,
-                                             FormatName(keyColumn.Name),
-                                             ConvertToDbType(keyColumn.Type, keyColumn.DbType, keyColumn.Length, keyColumn.Scale, keyColumn.IsKey, keyColumn.Name));
-                        command.AppendLine();
-                        i++;
-                        index++;
+                        int i = 0;
+                        foreach (var keyColumn in keyColumns)
+                        {
+                            keyArray[i] = FormatName(keyColumn.Name);
+                            command.AppendFormat("ALTER TABLE {0} CHANGE {1} {1} {2} not null;",
+                                                 dbTableName,
+                                                 FormatName(keyColumn.Name),
+                                                 ConvertToDbType(keyColumn.Type, keyColumn.DbType, keyColumn.Length, keyColumn.Scale, keyColumn.IsKey, keyColumn.Name));
+                            command.AppendLine();
+                            i++;
+                            index++;
+                        }
+                        command.AppendFormat("ALTER TABLE {0} ADD PRIMARY KEY ({1});", dbTableName, FormatQueryColumn(",", keyArray));
                     }
-                    command.AppendFormat("ALTER TABLE {0} ADD PRIMARY KEY ({1});", dbTableName, FormatQueryColumn(",", keyArray));
-                }
-                if (index > 0)
-                {
+                    if (index > 0)
+                    {
                         MySqlHelper.ExecuteNonQuery(conn, command.ToString());
+                    }
                 }
-            }
-            catch (Exception ex)
-            {
-                throw new Exception(string.Format("Execute sql error:{0}", command), ex);
-            }
+                catch (Exception ex)
+                {
+                    throw new Exception(string.Format("Execute sql error:{0}", command), ex);
+                }
 
             });
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="paramName"></param>
         /// <param name="value"></param>
@@ -740,7 +739,7 @@ namespace ZyGames.Framework.Data.MySql
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="paramName"></param>
         /// <param name="dbType"></param>
@@ -753,7 +752,7 @@ namespace ZyGames.Framework.Data.MySql
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="paramName"></param>
         /// <param name="value"></param>
@@ -762,8 +761,9 @@ namespace ZyGames.Framework.Data.MySql
         {
             return MySqlParamHelper.MakeInParam(paramName, MySqlDbType.VarChar, 0, value);
         }
+
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="paramName"></param>
         /// <param name="value"></param>
@@ -774,7 +774,7 @@ namespace ZyGames.Framework.Data.MySql
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="paramName"></param>
         /// <param name="value"></param>
@@ -783,8 +783,9 @@ namespace ZyGames.Framework.Data.MySql
         {
             return MySqlParamHelper.MakeInParam(paramName, MySqlDbType.Text, 0, value);
         }
+
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="paramName"></param>
         /// <param name="value"></param>
@@ -793,8 +794,9 @@ namespace ZyGames.Framework.Data.MySql
         {
             return MySqlParamHelper.MakeInParam(paramName, MySqlDbType.LongBlob, 0, value);
         }
+
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="paramName"></param>
         /// <param name="value"></param>
@@ -815,6 +817,7 @@ namespace ZyGames.Framework.Data.MySql
         {
             return new MySqlCommandStruct(tableName, editType, columns);
         }
+
         /// <summary>
         /// 创建CommandFilter对象
         /// </summary>
@@ -835,6 +838,7 @@ namespace ZyGames.Framework.Data.MySql
         {
             return MySqlParamHelper.FormatFilterParam(fieldName, compareChar, paramName);
         }
+
         /// <summary>
         /// 格式化Select语句中的列名
         /// </summary>
@@ -847,7 +851,7 @@ namespace ZyGames.Framework.Data.MySql
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="name"></param>
         /// <returns></returns>

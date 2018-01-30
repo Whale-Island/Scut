@@ -30,24 +30,28 @@ namespace ZyGames.Framework.Data
     public enum CommandMode
     {
         /// <summary>
-        /// 
+        /// 插入
         /// </summary>
         Insert = 0,
+
         /// <summary>
-        /// 
+        /// 修改
         /// </summary>
         Modify,
+
         /// <summary>
-        /// 
+        /// 删除
         /// </summary>
         Delete,
+
         /// <summary>
-        /// 
+        /// 先修改，不成功再插入
         /// </summary>
         ModifyInsert,
-		/// <summary>
-		/// The inquiry.
-		/// </summary>
-		Inquiry
+
+        /// <summary>
+        /// 查询
+        /// </summary>
+        Inquiry
     }
 }

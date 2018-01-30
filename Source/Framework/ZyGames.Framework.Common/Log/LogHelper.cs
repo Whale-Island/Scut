@@ -21,11 +21,12 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 ****************************************************************************/
+
+using NLog;
 using System;
 using System.Collections.Concurrent;
 using System.Text;
 using System.Web;
-using NLog;
 
 namespace ZyGames.Framework.Common.Log
 {
@@ -59,6 +60,7 @@ namespace ZyGames.Framework.Common.Log
                 SetConfig();
             }
         }
+
         public static void SetConfig()
         {
             _logInfoEnable = _logger.IsInfoEnabled;
@@ -68,59 +70,89 @@ namespace ZyGames.Framework.Common.Log
             _logFatalEnabled = _logger.IsFatalEnabled;
             _logDubugEnable = _logger.IsDebugEnabled;
         }
+
         public static void WriteInfo(string info)
         {
             if (LogHelper._logInfoEnable)
             {
+                var cachedConsoleColor = Console.ForegroundColor;
+                Console.ForegroundColor = ConsoleColor.White;
                 LogHelper._logger.Info(LogHelper.BuildMessage(info));
+                Console.ForegroundColor = cachedConsoleColor;
             }
         }
+
         public static void WriteDebug(string info)
         {
             if (LogHelper._logDubugEnable)
             {
+                var cachedConsoleColor = Console.ForegroundColor;
+                Console.ForegroundColor = ConsoleColor.Gray;
                 LogHelper._logger.Debug(LogHelper.BuildMessage(info));
+                Console.ForegroundColor = cachedConsoleColor;
             }
         }
+
         public static void WriteError(string info)
         {
             if (LogHelper._logErrorEnable)
             {
+                var cachedConsoleColor = Console.ForegroundColor;
+                Console.ForegroundColor = ConsoleColor.Red;
                 LogHelper._logger.Error(LogHelper.BuildMessage(info));
+                Console.ForegroundColor = cachedConsoleColor;
             }
         }
+
         public static void WriteException(string info, Exception ex)
         {
             if (LogHelper._logErrorEnable)
             {
+                var cachedConsoleColor = Console.ForegroundColor;
+                Console.ForegroundColor = ConsoleColor.DarkRed;
                 LogHelper._logger.Error(LogHelper.BuildMessage(info, ex));
+                Console.ForegroundColor = cachedConsoleColor;
             }
         }
+
         public static void WriteWarn(string info)
         {
             if (LogHelper._logWarnEnable)
             {
+                var cachedConsoleColor = Console.ForegroundColor;
+                Console.ForegroundColor = ConsoleColor.Yellow;
                 LogHelper._logger.Warn(LogHelper.BuildMessage(info));
+                Console.ForegroundColor = cachedConsoleColor;
             }
         }
+
         public static void WriteWarn(string info, Exception ex)
         {
             if (LogHelper._logWarnEnable)
             {
+                var cachedConsoleColor = Console.ForegroundColor;
+                Console.ForegroundColor = ConsoleColor.Yellow;
                 LogHelper._logger.Warn(LogHelper.BuildMessage(info, ex));
+                Console.ForegroundColor = cachedConsoleColor;
             }
         }
+
         public static void WriteFatal(string info)
         {
             if (LogHelper._logFatalEnabled)
             {
+                var cachedConsoleColor = Console.ForegroundColor;
+                Console.ForegroundColor = ConsoleColor.DarkRed;
                 LogHelper._logger.Fatal(LogHelper.BuildMessage(info));
+                Console.ForegroundColor = cachedConsoleColor;
             }
         }
+
         public static void WriteComplement(string info)
         {
             WriteTo("", info);
         }
+
         public static void WriteComplement(string info, Exception ex)
         {
             WriteTo("", info, ex);
@@ -141,7 +173,7 @@ namespace ZyGames.Framework.Common.Log
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="message"></param>
         public static void WriteLine(string message)
@@ -150,7 +182,7 @@ namespace ZyGames.Framework.Common.Log
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="level"></param>
         /// <param name="message"></param>
@@ -163,13 +195,14 @@ namespace ZyGames.Framework.Common.Log
         {
             return LogHelper.BuildMessage(info, null);
         }
+
         private static string BuildMessage(string info, Exception ex)
         {
             StringBuilder stringBuilder = new StringBuilder();
             HttpContext current = HttpContext.Current;
             try
             {
-                stringBuilder.AppendFormat("Time:{0}-{1}\r\n", DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss:fff"), info);
+                stringBuilder.AppendFormat("Time:{0}-{1}", DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss:fff"), info);
                 if (current != null)
                 {
                     HttpRequest request = null;
@@ -184,24 +217,24 @@ namespace ZyGames.Framework.Common.Log
 
                     if (request != null)
                     {
-                        stringBuilder.AppendFormat("Url:{0}\r\n", current.Request.Url);
+                        stringBuilder.AppendFormat("\r\nUrl:{0}", current.Request.Url);
                         if (null != current.Request.UrlReferrer)
                         {
-                            stringBuilder.AppendFormat("UrlReferrer:{0}\r\n", current.Request.UrlReferrer);
+                            stringBuilder.AppendFormat("\r\nUrlReferrer:{0}", current.Request.UrlReferrer);
                         }
-                        stringBuilder.AppendFormat("UserHostAddress:{0}\r\n", current.Request.UserHostAddress);
+                        stringBuilder.AppendFormat("\r\nUserHostAddress:{0}", current.Request.UserHostAddress);
                     }
                 }
                 if (ex != null)
                 {
-                    stringBuilder.AppendFormat("Exception:{0}\r\n", ex.ToString());
+                    stringBuilder.AppendFormat("\r\nException:{0}", ex.ToString());
                 }
             }
             catch (Exception error)
             {
                 stringBuilder.AppendLine(info + ", Exception:\r\n" + error);
             }
-            stringBuilder.AppendLine();
+            //stringBuilder.AppendLine();
             return stringBuilder.ToString();
         }
     }

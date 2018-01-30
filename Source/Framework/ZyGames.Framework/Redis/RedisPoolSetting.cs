@@ -21,6 +21,7 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 ****************************************************************************/
+
 using ZyGames.Framework.Common.Configuration;
 using ZyGames.Framework.Config;
 
@@ -34,7 +35,7 @@ namespace ZyGames.Framework.Redis
         private RedisSection _redisSection;
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         public RedisPoolSetting(bool useConfig = true)
         {
@@ -49,6 +50,7 @@ namespace ZyGames.Framework.Redis
             get { return _redisSection.Host; }
             set { _redisSection.Host = value; }
         }
+
         /// <summary>
         /// ReadOnlyHost
         /// </summary>
@@ -57,6 +59,7 @@ namespace ZyGames.Framework.Redis
             get { return _redisSection.ReadOnlyHost; }
             set { _redisSection.Host = value; }
         }
+
         /// <summary>
         /// MaxWritePoolSize
         /// </summary>
@@ -65,6 +68,7 @@ namespace ZyGames.Framework.Redis
             get { return _redisSection.MaxWritePoolSize; }
             set { _redisSection.MaxWritePoolSize = value; }
         }
+
         /// <summary>
         /// MaxReadPoolSize
         /// </summary>
@@ -73,6 +77,7 @@ namespace ZyGames.Framework.Redis
             get { return _redisSection.MaxReadPoolSize; }
             set { _redisSection.MaxReadPoolSize = value; }
         }
+
         /// <summary>
         /// ConnectTimeout(ms)
         /// </summary>
@@ -81,6 +86,7 @@ namespace ZyGames.Framework.Redis
             get { return _redisSection.ConnectTimeout; }
             set { _redisSection.ConnectTimeout = value; }
         }
+
         /// <summary>
         /// PoolTimeOut(ms), default 2000ms
         /// </summary>
@@ -89,6 +95,7 @@ namespace ZyGames.Framework.Redis
             get { return _redisSection.PoolTimeOut; }
             set { _redisSection.PoolTimeOut = value; }
         }
+
         /// <summary>
         /// DbIndex
         /// </summary>
@@ -96,6 +103,24 @@ namespace ZyGames.Framework.Redis
         {
             get { return _redisSection.DbIndex; }
             set { _redisSection.DbIndex = value; }
+        }
+
+        /// <summary>
+        /// Password
+        /// </summary>
+        public string Password
+        {
+            get { return _redisSection.Password; }
+            set { _redisSection.Password = value; }
+        }
+
+        /// <summary>
+        /// Port
+        /// </summary>
+        public int Port
+        {
+            get { return _redisSection.Port; }
+            set { _redisSection.Port = value; }
         }
 
         /// <summary>

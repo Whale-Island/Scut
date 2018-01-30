@@ -21,6 +21,7 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 ****************************************************************************/
+
 using System;
 using System.Collections.Generic;
 using ZyGames.Framework.Model;
@@ -28,7 +29,7 @@ using ZyGames.Framework.Model;
 namespace ZyGames.Framework.Net
 {
     /// <summary>
-    /// 
+    /// 设置对象属性方法委托
     /// </summary>
     /// <param name="entity"></param>
     /// <param name="column"></param>
@@ -41,10 +42,10 @@ namespace ZyGames.Framework.Net
     public interface IDataReceiver : IDisposable
     {
         /// <summary>
-        /// 
+        /// 尝试接收数据
         /// </summary>
         /// <typeparam name="T"></typeparam>
-        /// <returns></returns>
+        /// <returns>返回数据结果</returns>
         bool TryReceive<T>(out List<T> dataList) where T : ISqlEntity, new();
     }
 }

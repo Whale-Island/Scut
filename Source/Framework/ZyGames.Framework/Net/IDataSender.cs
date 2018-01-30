@@ -21,6 +21,7 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 ****************************************************************************/
+
 using System;
 using System.Collections.Generic;
 using ZyGames.Framework.Model;
@@ -33,13 +34,13 @@ namespace ZyGames.Framework.Net
     public delegate object EntityPropertyGetFunc<T>(T entity, SchemaColumn column) where T : ISqlEntity;
 
     /// <summary>
-    /// 
+    /// 过滤提交更新列名的方法委托
     /// </summary>
     /// <param name="entity"></param>
     /// <param name="schema"></param>
     /// <param name="isChange"></param>
     /// <returns></returns>
-    public delegate IList<string> EnttiyPostColumnFunc<T>(T entity, SchemaTable schema, bool isChange)where T : ISqlEntity;
+    public delegate IList<string> EnttiyPostColumnFunc<T>(T entity, SchemaTable schema, bool isChange) where T : ISqlEntity;
 
     /// <summary>
     /// 数据传送操作接口
@@ -48,7 +49,7 @@ namespace ZyGames.Framework.Net
     {
 
         /// <summary>
-        /// 
+        /// 发送数据
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="dataList"></param>

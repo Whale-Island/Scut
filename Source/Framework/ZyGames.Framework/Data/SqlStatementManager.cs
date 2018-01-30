@@ -21,16 +21,15 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 ****************************************************************************/
+
+using MySql.Data.MySqlClient;
 using System;
 using System.Data;
 using System.Data.SqlClient;
-using System.Linq;
 using System.Threading;
-using MySql.Data.MySqlClient;
 using ZyGames.Framework.Common.Configuration;
 using ZyGames.Framework.Common.Log;
 using ZyGames.Framework.Common.Serialization;
-using ZyGames.Framework.Common.Threading;
 using ZyGames.Framework.Config;
 using ZyGames.Framework.Profile;
 using ZyGames.Framework.Redis;
@@ -38,28 +37,33 @@ using ZyGames.Framework.Redis;
 namespace ZyGames.Framework.Data
 {
     /// <summary>
-    /// sql命令管理
+    /// sql消息队列命令管理
     /// </summary>
     public abstract class SqlStatementManager
     {
         private static string SlaveMessageQueue;
+
         /// <summary>
         /// 同步到数据库的Sql队列, 存储格式List:SqlStatement对象
         /// </summary>
         public static readonly string SqlSyncQueueKey = "__QUEUE_SQL_SYNC";
+
         /// <summary>
         /// 同步到数据库的Sql出错队列，格式同SqlSyncQueueKey
         /// </summary>
         public static readonly string SqlSyncErrorQueueKey = "__QUEUE_SQL_SYNC_ERROR";
+
         /// <summary>
-        /// 
+        ///
         /// </summary>
         public static readonly string SqlSyncConnErrorQueueKey = "__QUEUE_SQL_SYNC_CONN_ERROR";
+
         private static Timer[] _queueWatchTimers;
+
         //private static SmartThreadPool _threadPools;
         private static int[] _isWatchWorking;
-        private const int sqlSyncPackSize = 101;
 
+        private const int sqlSyncPackSize = 101;
 
         static SqlStatementManager()
         {
@@ -71,7 +75,7 @@ namespace ZyGames.Framework.Data
         }
 
         /// <summary>
-        /// 
+        /// 是否使用异常队列
         /// </summary>
         public static bool IsUseSyncQueue
         {
@@ -79,7 +83,7 @@ namespace ZyGames.Framework.Data
         }
 
         /// <summary>
-        /// Start
+        /// 开启初始化监听处理
         /// </summary>
         public static void Start()
         {
@@ -115,7 +119,7 @@ namespace ZyGames.Framework.Data
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="parameters"></param>
         /// <returns></returns>
@@ -160,7 +164,7 @@ namespace ZyGames.Framework.Data
         }
 
         /// <summary>
-        /// 放到Redsi中
+        /// 放到消息队列池中
         /// </summary>
         /// <param name="statement"></param>
         public static bool Put(SqlStatement statement)
@@ -273,7 +277,7 @@ namespace ZyGames.Framework.Data
                         {
                             break;
                         }
-                       DoProcessSqlSyncQueue(workingKey, bufferBytes);
+                        DoProcessSqlSyncQueue(workingKey, bufferBytes);
                     } while (true);
                 }
                 catch (Exception ex)
@@ -350,7 +354,7 @@ namespace ZyGames.Framework.Data
             }
             catch (Exception ex)
             {
-                TraceLog.WriteError("DoProcessSqlSyncQueue error:{0}", ex);
+                TraceLog.WriteError("DoProcessSqlSyncQueue error:{0}\r\n", ex.Message, ex.StackTrace);
             }
         }
 

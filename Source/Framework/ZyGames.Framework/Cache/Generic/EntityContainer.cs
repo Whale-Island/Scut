@@ -21,11 +21,11 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 ****************************************************************************/
+
+using ProtoBuf;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading;
-using ProtoBuf;
 using ZyGames.Framework.Cache.Generic.Pool;
 using ZyGames.Framework.Common;
 using ZyGames.Framework.Common.Log;
@@ -60,9 +60,20 @@ namespace ZyGames.Framework.Cache.Generic
                 Initialize();
                 _cachePool.TryGetValue(_containerKey, out _container);
             }
+
+            if (_container == null)
+            {
+                TraceLog.WriteError("加载{0}-EntityContainer失败，未能获取_container", _containerKey);
+            }
+            else if (_container.Collection == null)
+            {
+                TraceLog.WriteError("加载{0}-EntityContainer失败，未能获取Collection", _containerKey);
+            }
+
         }
 
         #region Init
+
         /// <summary>
         /// 初始化容器
         /// </summary>
@@ -93,26 +104,30 @@ namespace ZyGames.Framework.Cache.Generic
         {
             _cachePool.InitContainer(_containerKey);
         }
-        #endregion
+
+        #endregion Init
 
         #region Property
+
         /// <summary>
-        /// 
+        ///
         /// </summary>
         public bool IsReadonly
         {
             get;
             set;
         }
+
         /// <summary>
-        /// 
+        ///
         /// </summary>
         public string RootKey
         {
             get { return _containerKey; }
         }
+
         /// <summary>
-        /// 
+        ///
         /// </summary>
         public int Count
         {
@@ -121,8 +136,9 @@ namespace ZyGames.Framework.Cache.Generic
                 return _container.Collection.Count;
             }
         }
+
         /// <summary>
-        /// 
+        ///
         /// </summary>
         public bool IsEmpty
         {
@@ -131,15 +147,17 @@ namespace ZyGames.Framework.Cache.Generic
                 return _container.Collection.IsEmpty;
             }
         }
+
         /// <summary>
-        /// 
+        ///
         /// </summary>
         public LoadingStatus LoadStatus
         {
             get { return _container.LoadingStatus; }
         }
+
         /// <summary>
-        /// 
+        ///
         /// </summary>
         public CacheItemSet[] ChildrenItem
         {
@@ -161,17 +179,25 @@ namespace ZyGames.Framework.Cache.Generic
         {
             get
             {
-
                 if (_container != null)
                 {
                     return _container.Collection;
                 }
+                else if (_cachePool != null && !_cachePool.TryGetValue(_containerKey, out _container))
+                {
+                    Initialize();
+                    _cachePool.TryGetValue(_containerKey, out _container);
+                    return _container.Collection;
+                }
+
                 throw new Exception(string.Format("CacheContainer \"{0}\" is not created.", _containerKey));
             }
         }
-        #endregion
+
+        #endregion Property
 
         #region Contains
+
         private void CheckLoad()
         {
             //兼容调用AutoLoad方法时加载的部分数据
@@ -191,9 +217,8 @@ namespace ZyGames.Framework.Cache.Generic
             return _cachePool.CheckChanged(_containerKey, key);
         }
 
-
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="key"></param>
         /// <returns></returns>
@@ -206,8 +231,9 @@ namespace ZyGames.Framework.Cache.Generic
             }
             return false;
         }
+
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="match"></param>
         /// <returns></returns>
@@ -222,7 +248,7 @@ namespace ZyGames.Framework.Cache.Generic
             Container.Foreach<CacheItemSet>((key, itemSet) =>
             {
                 T entity = (T)itemSet.GetItem();
-                if (match(entity))
+                if (entity == null || match(entity))
                 {
                     result = true;
                     return false;
@@ -231,8 +257,9 @@ namespace ZyGames.Framework.Cache.Generic
             });
             return result;
         }
+
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="match"></param>
         /// <returns></returns>
@@ -258,7 +285,7 @@ namespace ZyGames.Framework.Cache.Generic
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="key"></param>
         /// <param name="itemSet"></param>
@@ -272,10 +299,10 @@ namespace ZyGames.Framework.Cache.Generic
             return false;
         }
 
-
-        #endregion
+        #endregion Contains
 
         #region Foreach
+
         /// <summary>
         /// 遍历实体
         /// </summary>
@@ -290,6 +317,8 @@ namespace ZyGames.Framework.Cache.Generic
             Container.Foreach<CacheItemSet>((key, itemSet) =>
             {
                 T entity = (T)itemSet.GetItem();
+                if (entity == null)
+                    return true;
                 return func(key, entity);
             });
         }
@@ -308,12 +337,14 @@ namespace ZyGames.Framework.Cache.Generic
             Container.Foreach<CacheItemSet>((key, itemSet) =>
             {
                 BaseCollection enityGroup = (BaseCollection)itemSet.GetItem();
-                enityGroup.Foreach(func, key);
+                if (enityGroup != null)
+                    enityGroup.Foreach(func, key);
                 return true;
             });
         }
+
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="func"></param>
         public void ForeachQueue(Func<string, T, bool> func)
@@ -326,12 +357,14 @@ namespace ZyGames.Framework.Cache.Generic
             Container.Foreach<CacheItemSet>((key, itemSet) =>
             {
                 CacheQueue<T> enityGroup = (CacheQueue<T>)itemSet.GetItem();
-                enityGroup.Foreach(func, key);
+                if (enityGroup != null)
+                    enityGroup.Foreach(func, key);
                 return true;
             });
         }
+
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <returns></returns>
         public List<KeyValuePair<string, CacheItemSet>> ToList()
@@ -342,7 +375,7 @@ namespace ZyGames.Framework.Cache.Generic
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <returns></returns>
         public IEnumerable<T> ToEntityEnumerable(bool isLoad = false)
@@ -352,7 +385,7 @@ namespace ZyGames.Framework.Cache.Generic
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <returns></returns>
         public IEnumerable<T> ToGroupEnumerable()
@@ -370,11 +403,13 @@ namespace ZyGames.Framework.Cache.Generic
                 }
             }
         }
-        #endregion
+
+        #endregion Foreach
 
         #region Entity
+
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="key"></param>
         /// <returns></returns>
@@ -407,7 +442,7 @@ namespace ZyGames.Framework.Cache.Generic
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="keys"></param>
         /// <param name="isAutoLoad"></param>
@@ -418,7 +453,7 @@ namespace ZyGames.Framework.Cache.Generic
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="key"></param>
         /// <param name="isAutoLoad"></param>
@@ -453,7 +488,7 @@ namespace ZyGames.Framework.Cache.Generic
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="entityKey"></param>
         /// <param name="entityData"></param>
@@ -467,7 +502,7 @@ namespace ZyGames.Framework.Cache.Generic
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="entityKey"></param>
         /// <param name="entityData"></param>
@@ -475,30 +510,38 @@ namespace ZyGames.Framework.Cache.Generic
         /// <param name="itemSet"></param>
         /// <param name="isLoad"></param>
         /// <returns></returns>
-        public bool AddOrUpdateEntity(string entityKey, T entityData, int periodTime, out  CacheItemSet itemSet, bool isLoad = false)
+        public bool AddOrUpdateEntity(string entityKey, T entityData, int periodTime, out CacheItemSet itemSet, bool isLoad = false)
         {
-            if (!Container.TryGetValue(entityKey, out itemSet))
+            try
             {
-                itemSet = CreateItemSet(CacheType.Entity, periodTime);
-
-                if (!Container.TryAdd(entityKey, itemSet))
+                if (!Container.TryGetValue(entityKey, out itemSet))
                 {
-                    return false;
+                    itemSet = CreateItemSet(CacheType.Entity, periodTime);
+
+                    if (!Container.TryAdd(entityKey, itemSet))
+                    {
+                        return false;
+                    }
                 }
+                CheckEventBind(entityData as AbstractEntity);
+                itemSet.SetItem(entityData);
+                if (!isLoad)
+                {
+                    entityData.TriggerNotify();
+                }
+                entityData.IsInCache = true;
+                return true;
             }
-            CheckEventBind(entityData as AbstractEntity);
-            itemSet.SetItem(entityData);
-            if (!isLoad)
+            catch (Exception e)
             {
-                entityData.TriggerNotify();
+                itemSet = null;
+                TraceLog.WriteError("添加或更新实体失败，出现异常：{0}\r\n{1}", e.Message, e.StackTrace);
             }
-            entityData.IsInCache = true;
-            return true;
+            return false;
         }
 
-
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="entityKey"></param>
         /// <param name="entityData"></param>
@@ -506,7 +549,7 @@ namespace ZyGames.Framework.Cache.Generic
         /// <param name="itemSet"></param>
         /// <param name="isLoad"></param>
         /// <returns></returns>
-        public bool TryAddEntity(string entityKey, T entityData, int periodTime, out  CacheItemSet itemSet, bool isLoad = false)
+        public bool TryAddEntity(string entityKey, T entityData, int periodTime, out CacheItemSet itemSet, bool isLoad = false)
         {
             itemSet = CreateItemSet(CacheType.Entity, periodTime);
             itemSet.SetItem(entityData);
@@ -522,9 +565,11 @@ namespace ZyGames.Framework.Cache.Generic
             }
             return false;
         }
-        #endregion
+
+        #endregion Entity
 
         #region Personal
+
         /// <summary>
         /// 分组集合模型
         /// </summary>
@@ -536,8 +581,9 @@ namespace ZyGames.Framework.Cache.Generic
         {
             return TryGetCacheItem(groupKey, true, out enityGroup, out loadStatus);
         }
+
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="groupKey"></param>
         /// <param name="key"></param>
@@ -568,7 +614,7 @@ namespace ZyGames.Framework.Cache.Generic
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="groupKey"></param>
         /// <param name="key"></param>
@@ -594,8 +640,9 @@ namespace ZyGames.Framework.Cache.Generic
             }
             return false;
         }
+
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="key"></param>
         /// <param name="list"></param>
@@ -612,9 +659,11 @@ namespace ZyGames.Framework.Cache.Generic
             }
             return false;
         }
-        #endregion
+
+        #endregion Personal
 
         #region Queue
+
         /// <summary>
         /// 队列模型
         /// </summary>
@@ -626,8 +675,9 @@ namespace ZyGames.Framework.Cache.Generic
             LoadingStatus loadStatus;
             return TryGetCacheItem(groupKey, false, out enityGroup, out loadStatus);
         }
+
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="groupKey"></param>
         /// <param name="entityData"></param>
@@ -655,12 +705,13 @@ namespace ZyGames.Framework.Cache.Generic
             }
             return false;
         }
-        #endregion
+
+        #endregion Queue
 
         #region Rank
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="key"></param>
         /// <param name="count"></param>
@@ -679,7 +730,7 @@ namespace ZyGames.Framework.Cache.Generic
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="key"></param>
         /// <param name="match"></param>
@@ -705,7 +756,7 @@ namespace ZyGames.Framework.Cache.Generic
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <typeparam name="V"></typeparam>
         /// <param name="key"></param>
@@ -724,7 +775,7 @@ namespace ZyGames.Framework.Cache.Generic
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="key"></param>
         /// <param name="count"></param>
@@ -744,7 +795,7 @@ namespace ZyGames.Framework.Cache.Generic
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="key"></param>
         /// <param name="dataList"></param>
@@ -767,7 +818,7 @@ namespace ZyGames.Framework.Cache.Generic
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <typeparam name="V"></typeparam>
         /// <param name="key"></param>
@@ -786,7 +837,7 @@ namespace ZyGames.Framework.Cache.Generic
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <typeparam name="V"></typeparam>
         /// <param name="key"></param>
@@ -801,8 +852,9 @@ namespace ZyGames.Framework.Cache.Generic
             cacheItems.SortDesc(t => t.Score);
             _cachePool.TryUpdateRankEntity(key, cacheItems.ToArray());
         }
+
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="key"></param>
         /// <param name="t1"></param>
@@ -831,8 +883,9 @@ namespace ZyGames.Framework.Cache.Generic
             }
             return false;
         }
+
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="key"></param>
         /// <param name="fromScore"></param>
@@ -863,7 +916,7 @@ namespace ZyGames.Framework.Cache.Generic
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="key"></param>
         /// <param name="dataList"></param>
@@ -903,12 +956,12 @@ namespace ZyGames.Framework.Cache.Generic
             return true;
         }
 
-
-        #endregion
+        #endregion Rank
 
         #region Load
+
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <typeparam name="V"></typeparam>
         /// <param name="receiveParam"></param>
@@ -932,7 +985,7 @@ namespace ZyGames.Framework.Cache.Generic
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <typeparam name="V"></typeparam>
         /// <param name="redisKey"></param>
@@ -942,7 +995,6 @@ namespace ZyGames.Framework.Cache.Generic
         {
             return _cachePool.TryLoadHistory(redisKey, out dataList);
         }
-
 
         /// <summary>
         /// 重新加载数据
@@ -989,6 +1041,10 @@ namespace ZyGames.Framework.Cache.Generic
                 _container.OnLoadFactory(_loadFactory, false);
                 return _container.LoadingStatus;
             }
+            else
+            {
+                TraceLog.WriteError("Load异常，_container为空！");
+            }
             return LoadingStatus.None;
         }
 
@@ -1022,7 +1078,7 @@ namespace ZyGames.Framework.Cache.Generic
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <typeparam name="V"></typeparam>
         /// <param name="receiveParam"></param>
@@ -1056,7 +1112,7 @@ namespace ZyGames.Framework.Cache.Generic
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="key"></param>
         /// <returns></returns>
@@ -1070,11 +1126,12 @@ namespace ZyGames.Framework.Cache.Generic
             return LoadItem(key, true);
         }
 
-        #endregion
+        #endregion Load
 
         #region SendTo
+
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <typeparam name="V"></typeparam>
         /// <param name="dataList"></param>
@@ -1084,8 +1141,9 @@ namespace ZyGames.Framework.Cache.Generic
 
             _cachePool.SendData(dataList, sendParam);
         }
+
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <typeparam name="V"></typeparam>
         /// <param name="dataList"></param>
@@ -1094,11 +1152,13 @@ namespace ZyGames.Framework.Cache.Generic
         {
             return DataSyncQueueManager.SendSync(dataList);
         }
-        #endregion
+
+        #endregion SendTo
 
         #region GetChanged
+
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="changeKey"></param>
         /// <param name="isChange"></param>
@@ -1108,8 +1168,9 @@ namespace ZyGames.Framework.Cache.Generic
 
             return _cachePool.GetChangeList<KeyValuePair<string, CacheItemSet>>(_containerKey, changeKey, isChange);
         }
+
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="changeKey"></param>
         /// <param name="isChange"></param>
@@ -1123,8 +1184,9 @@ namespace ZyGames.Framework.Cache.Generic
                 return new KeyValuePair<string, T>(pair.Key, entity);
             }).ToList();
         }
+
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="changeKey"></param>
         /// <param name="isChange"></param>
@@ -1138,8 +1200,9 @@ namespace ZyGames.Framework.Cache.Generic
                     from itemPair in itemArray
                     select new KeyValuePair<string, T>(pair.Key, itemPair.Value)).ToList();
         }
+
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="changeKey"></param>
         /// <param name="isChange"></param>
@@ -1154,9 +1217,10 @@ namespace ZyGames.Framework.Cache.Generic
                     select new KeyValuePair<string, T>(pair.Key, item)).ToList();
         }
 
-        #endregion
+        #endregion GetChanged
 
         #region Remove
+
         /// <summary>
         /// Remove entity from the cache, if use loaded from Redis
         /// </summary>
@@ -1219,8 +1283,9 @@ namespace ZyGames.Framework.Cache.Generic
             }
             return false;
         }
+
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="callback"></param>
         /// <returns></returns>
@@ -1235,11 +1300,13 @@ namespace ZyGames.Framework.Cache.Generic
             }
             return false;
         }
-        #endregion
+
+        #endregion Remove
 
         #region event
+
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="key"></param>
         public void UnChangeNotify(string key)
@@ -1263,9 +1330,11 @@ namespace ZyGames.Framework.Cache.Generic
                 }
             }
         }
-        #endregion
+
+        #endregion event
 
         #region private
+
         /// <summary>
         /// 尝试取缓存项，若不存在则自动加载
         /// </summary>
@@ -1365,7 +1434,6 @@ namespace ZyGames.Framework.Cache.Generic
             return result;
         }
 
-
         private CacheItemSet CreateItemSet(CacheType cacheType, int periodTime)
         {
             CacheItemSet itemSet = new CacheItemSet(cacheType, periodTime, IsReadonly);
@@ -1400,7 +1468,7 @@ namespace ZyGames.Framework.Cache.Generic
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="disposing"></param>
         protected override void Dispose(bool disposing)
@@ -1413,8 +1481,8 @@ namespace ZyGames.Framework.Cache.Generic
             }
             base.Dispose(disposing);
         }
-        #endregion
 
+        #endregion private
 
     }
 }

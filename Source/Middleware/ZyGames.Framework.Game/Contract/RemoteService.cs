@@ -21,11 +21,10 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 ****************************************************************************/
+
 using System;
-using System.Collections.Generic;
 using System.Text;
 using System.Web;
-using System.Web.UI.WebControls;
 using ZyGames.Framework.Collection.Generic;
 using ZyGames.Framework.Common.Log;
 using ZyGames.Framework.Game.Runtime;
@@ -176,13 +175,14 @@ namespace ZyGames.Framework.Game.Contract
         private int _userId = 0;
         private string _proxySessionId = "";
         private DictionaryExtend<int, RemotePackage> _packagePools;
+
         /// <summary>
         /// Server push to data callback
         /// </summary>
         public event RemoteCallback PushedHandle;
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         public event RemoteCallback ErrorHandle;
 
@@ -199,7 +199,7 @@ namespace ZyGames.Framework.Game.Contract
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         public int PackageCount { get { return _packagePools.Count; } }
 
@@ -236,7 +236,7 @@ namespace ZyGames.Framework.Game.Contract
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="routePath">Call method path, ex:className.method</param>
         /// <param name="param"></param>
@@ -276,6 +276,12 @@ namespace ZyGames.Framework.Game.Contract
         private bool Remove(int msgId)
         {
             return _packagePools.Remove(msgId);
+        }
+
+        public bool IsTcpConnect()
+        {
+            if (_client.IsSocket) return (_client as SocketRemoteClient).Connected;
+            return false;
         }
     }
 }

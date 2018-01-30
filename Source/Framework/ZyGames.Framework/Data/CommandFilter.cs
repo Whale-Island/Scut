@@ -21,6 +21,7 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 ****************************************************************************/
+
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -30,13 +31,14 @@ namespace ZyGames.Framework.Data
 {
 
     /// <summary>
-    /// 程序集内使用
+    /// Sql命令过滤器
     /// </summary>
     public class CommandFilter
     {
         private Dictionary<string, IDataParameter> _parameter = new Dictionary<string, IDataParameter>();
+
         /// <summary>
-        /// 
+        /// init
         /// </summary>
         public CommandFilter()
         {
@@ -44,7 +46,7 @@ namespace ZyGames.Framework.Data
         }
 
         /// <summary>
-        /// 
+        /// Sql语句中where表达式
         /// </summary>
         public string Condition
         {
@@ -53,7 +55,7 @@ namespace ZyGames.Framework.Data
         }
 
         /// <summary>
-        /// 
+        /// 格式化where表达式，针对不同数据库的参数关键词的处理
         /// </summary>
         /// <param name="fieldName"></param>
         /// <param name="compareChar"></param>
@@ -64,7 +66,7 @@ namespace ZyGames.Framework.Data
         }
 
         /// <summary>
-        /// 
+        /// 格式化where中IN从语句的表达式
         /// </summary>
         /// <param name="fieldName"></param>
         /// <param name="values"></param>
@@ -84,8 +86,9 @@ namespace ZyGames.Framework.Data
             return string.Format("{0} IN ({1})", SqlParamHelper.FormatName(fieldName), string.Join(",", paramNames));
 
         }
+
         /// <summary>
-        /// 
+        /// 获得Sql命令的参数列表
         /// </summary>
         public IDataParameter[] Parameters
         {
@@ -103,17 +106,17 @@ namespace ZyGames.Framework.Data
         }
 
         /// <summary>
-        /// 
+        /// 添加Sql命令的参数
         /// </summary>
-        /// <param name="paramName"></param>
-        /// <param name="value"></param>
+        /// <param name="paramName">不带@的参数名</param>
+        /// <param name="value">参数值</param>
         public virtual void AddParam(string paramName, object value)
         {
             AddParam(SqlParamHelper.MakeInParam(paramName, value));
         }
 
         /// <summary>
-        /// 
+        /// 不使用
         /// </summary>
         /// <param name="paramName"></param>
         /// <param name="dbType"></param>
@@ -126,7 +129,7 @@ namespace ZyGames.Framework.Data
         }
 
         /// <summary>
-        /// 
+        /// 添加Sql命令的参数
         /// </summary>
         /// <param name="param"></param>
         public void AddParam(IDataParameter param)

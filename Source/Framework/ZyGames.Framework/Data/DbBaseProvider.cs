@@ -21,6 +21,7 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 ****************************************************************************/
+
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -33,7 +34,7 @@ namespace ZyGames.Framework.Data
     public class DbConnectionException : Exception
     {
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="message"></param>
         public DbConnectionException(string message)
@@ -41,8 +42,9 @@ namespace ZyGames.Framework.Data
         {
 
         }
+
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="message"></param>
         /// <param name="error"></param>
@@ -93,6 +95,7 @@ namespace ZyGames.Framework.Data
         {
             get { return ConnectionSetting.ProviderTypeName; }
         }
+
         /// <summary>
         /// 连接数据库字符串
         /// </summary>
@@ -137,11 +140,11 @@ namespace ZyGames.Framework.Data
         }
 
         /// <summary>
-        /// 
+        /// 执行带返回值的sql语句，需要手动关闭reader
         /// </summary>
-        /// <param name="commandType"></param>
-        /// <param name="commandText"></param>
-        /// <param name="parameters"></param>
+        /// <param name="commandType">命令类型</param>
+        /// <param name="commandText">sql字符串语句</param>
+        /// <param name="parameters">sql的参数</param>
         /// <returns></returns>
         public IDataReader ExecuteReader(CommandType commandType, string commandText, params IDataParameter[] parameters)
         {
@@ -149,17 +152,17 @@ namespace ZyGames.Framework.Data
         }
 
         /// <summary>
-        /// 
+        /// 执行带返回值的sql语句，需要手动关闭reader
         /// </summary>
-        /// <param name="commandType"></param>
-        /// <param name="commandTimeout"></param>
-        /// <param name="commandText"></param>
-        /// <param name="parameters"></param>
+        /// <param name="commandType">命令类型</param>
+        /// <param name="commandTimeout">命令执行超时时间</param>
+        /// <param name="commandText">sql字符串语句</param>
+        /// <param name="parameters">sql的参数</param>
         /// <returns></returns>
         public abstract IDataReader ExecuteReader(CommandType commandType, int? commandTimeout, string commandText, params IDataParameter[] parameters);
 
         /// <summary>
-        /// 
+        /// 执行只返回第一行第一列值的sql语句
         /// </summary>
         /// <param name="command"></param>
         /// <returns></returns>
@@ -170,11 +173,11 @@ namespace ZyGames.Framework.Data
         }
 
         /// <summary>
-        /// 
+        /// 执行只返回第一行第一列值的sql语句
         /// </summary>
-        /// <param name="commandType"></param>
-        /// <param name="commandText"></param>
-        /// <param name="parameters"></param>
+        /// <param name="commandType">命令类型</param>
+        /// <param name="commandText">sql字符串语句</param>
+        /// <param name="parameters">sql的参数</param>
         /// <returns></returns>
         public object ExecuteScalar(CommandType commandType, string commandText, params IDataParameter[] parameters)
         {
@@ -184,15 +187,15 @@ namespace ZyGames.Framework.Data
         /// <summary>
         /// 执行Sql语句，返回第一行第一列值
         /// </summary>
-        /// <param name="commandType"></param>
-        /// <param name="commandTimeout"></param>
-        /// <param name="commandText"></param>
-        /// <param name="parameters"></param>
+        /// <param name="commandType">命令类型</param>
+        /// <param name="commandTimeout">命令执行超时时间</param>
+        /// <param name="commandText">sql字符串语句</param>
+        /// <param name="parameters">sql的参数</param>
         /// <returns></returns>
         public abstract object ExecuteScalar(CommandType commandType, int? commandTimeout, string commandText, params IDataParameter[] parameters);
 
         /// <summary>
-        /// 执行Sql语句
+        /// 执行返回影响行数的Sql语句（增，删，改）
         /// </summary>
         /// <param name="command"></param>
         /// <returns></returns>
@@ -203,19 +206,19 @@ namespace ZyGames.Framework.Data
         }
 
         /// <summary>
-        /// 执行Sql语句
+        /// 执行返回影响行数的Sql语句（增，删，改）
         /// </summary>
-        /// <param name="commands"></param>
+        /// <param name="commands">批量命令</param>
         /// <returns></returns>
         public abstract IEnumerable<int> ExecuteQuery(IEnumerable<CommandStruct> commands);
 
         /// <summary>
-        /// 执行Sql语句
+        /// 执行返回影响行数的Sql语句（增，删，改）
         /// </summary>
-        /// <param name="commandType"></param>
-        /// <param name="commandText"></param>
-        /// <param name="parameters"></param>
-        /// <exception cref="DbConnectionException"></exception>
+        /// <param name="commandType">命令类型</param>
+        /// <param name="commandText">sql字符串语句</param>
+        /// <param name="parameters">sql的参数</param>
+        /// <exception cref="DbConnectionException">抛出连接异常</exception>
         /// <returns></returns>
         public int ExecuteQuery(CommandType commandType, string commandText, params IDataParameter[] parameters)
         {
@@ -223,22 +226,22 @@ namespace ZyGames.Framework.Data
         }
 
         /// <summary>
-        /// 
+        /// 执行返回影响行数的Sql语句（增，删，改）
         /// </summary>
-        /// <param name="commandType"></param>
-        /// <param name="commandTimeout"></param>
-        /// <param name="commandText"></param>
-        /// <param name="parameters"></param>
+        /// <param name="commandType">命令类型</param>
+        /// <param name="commandTimeout">命令执行超时时间</param>
+        /// <param name="commandText">sql字符串语句</param>
+        /// <param name="parameters">sql的参数</param>
         /// <returns></returns>
         public abstract int ExecuteQuery(CommandType commandType, int? commandTimeout, string commandText, params IDataParameter[] parameters);
 
         /// <summary>
-        /// 写入消息队列
+        /// 提交到消息队列中执行返回影响行数的Sql语句（增，删，改），有延迟时间
         /// </summary>
-        /// <param name="identityId"></param>
-        /// <param name="commandType"></param>
-        /// <param name="commandText"></param>
-        /// <param name="parameters"></param>
+        /// <param name="identityId">消息队列负载标识ID</param>
+        /// <param name="commandType">命令类型</param>
+        /// <param name="commandText">sql字符串语句</param>
+        /// <param name="parameters">sql的参数</param>
         /// <returns></returns>
         public int ExecuteNonQuery(int identityId, CommandType commandType, string commandText, params IDataParameter[] parameters)
         {
@@ -246,112 +249,118 @@ namespace ZyGames.Framework.Data
         }
 
         /// <summary>
-        /// 
+        /// 提交到消息队列中执行返回影响行数的Sql语句（增，删，改），有延迟时间
         /// </summary>
-        /// <param name="identityId"></param>
-        /// <param name="commandType"></param>
-        /// <param name="tableName"></param>
-        /// <param name="commandText"></param>
-        /// <param name="parameters"></param>
+        /// <param name="identityId">消息队列负载标识ID</param>
+        /// <param name="commandType">命令类型</param>
+        /// <param name="tableName">表名</param>
+        /// <param name="commandText">sql字符串语句</param>
+        /// <param name="parameters">sql的参数</param>
         /// <returns></returns>
         public abstract int ExecuteNonQuery(int identityId, CommandType commandType, string tableName, string commandText, params IDataParameter[] parameters);
 
         /// <summary>
-        /// 生成Sql命令对象
+        /// 生成Sql语句
         /// </summary>
-        /// <param name="identityId"></param>
-        /// <param name="command"></param>
+        /// <param name="identityId">消息队列负载标识ID</param>
+        /// <param name="command">命令对象</param>
         /// <returns></returns>
         public abstract SqlStatement GenerateSql(int identityId, CommandStruct command);
 
         /// <summary>
         /// 检查是否有指定表名
         /// </summary>
-        /// <param name="tableName"></param>
-        /// <param name="columns"></param>
+        /// <param name="tableName">表名</param>
+        /// <param name="columns">取出改变的列</param>
         /// <returns></returns>
         public abstract bool CheckTable(string tableName, out DbColumn[] columns);
 
         /// <summary>
         /// 创建表
         /// </summary>
-        /// <param name="tableName"></param>
-        /// <param name="columns"></param>
+        /// <param name="tableName">表名</param>
+        /// <param name="columns">列对象集合</param>
         /// <returns></returns>
         public abstract void CreateTable(string tableName, DbColumn[] columns);
+
         /// <summary>
-        /// 
+        /// 创建索引
         /// </summary>
-        /// <param name="tableName"></param>
-        /// <param name="indexs">index cloumn, ex:"col1,col2"</param>
+        /// <param name="tableName">表名</param>
+        /// <param name="indexs">索引列集, 例:"col1,col2"</param>
         public abstract void CreateIndexs(string tableName, string[] indexs);
 
         /// <summary>
         /// 创建列
         /// </summary>
-        /// <param name="tableName"></param>
-        /// <param name="columns"></param>
+        /// <param name="tableName">表名</param>
+        /// <param name="columns">增加的列集合</param>
         /// <returns></returns>
         public abstract void CreateColumn(string tableName, DbColumn[] columns);
 
         /// <summary>
         /// 创建参数
         /// </summary>
-        /// <param name="paramName"></param>
-        /// <param name="value"></param>
+        /// <param name="paramName">不带@参数名</param>
+        /// <param name="value">参数值</param>
         /// <returns></returns>
         public abstract IDataParameter CreateParameter(string paramName, object value);
 
         /// <summary>
         /// 创建参数
         /// </summary>
-        /// <param name="paramName"></param>
-        /// <param name="dbType"></param>
-        /// <param name="size"></param>
-        /// <param name="value"></param>
+        /// <param name="paramName">不带@参数名</param>
+        /// <param name="dbType">字段类型</param>
+        /// <param name="size">字段大小</param>
+        /// <param name="value">字段值</param>
         /// <returns></returns>
         public abstract IDataParameter CreateParameter(string paramName, int dbType, int size, object value);
 
         /// <summary>
         /// 创建Guid类型的参数
         /// </summary>
-        /// <param name="paramName"></param>
-        /// <param name="value"></param>
+        /// <param name="paramName">不带@参数名</param>
+        /// <param name="value">字段值</param>
         /// <returns></returns>
         public abstract IDataParameter CreateParameterByGuid(string paramName, object value);
+
         /// <summary>
-        /// 
+        ///
         /// </summary>
-        /// <param name="paramName"></param>
-        /// <param name="value"></param>
+        /// <param name="paramName">不带@参数名</param>
+        /// <param name="value">字段值</param>
         /// <returns></returns>
         public abstract IDataParameter CreateParameterByLongText(string paramName, object value);
+
         /// <summary>
         /// 创建Text类型的参数
         /// </summary>
-        /// <param name="paramName"></param>
-        /// <param name="value"></param>
+        /// <param name="paramName">不带@参数名</param>
+        /// <param name="value">字段值</param>
         /// <returns></returns>
         public abstract IDataParameter CreateParameterByText(string paramName, object value);
+
         /// <summary>
-        /// 
+        /// 创建长blob类型的参数
         /// </summary>
-        /// <param name="paramName"></param>
-        /// <param name="value"></param>
+        /// <param name="paramName">不带@参数名</param>
+        /// <param name="value">字段值</param>
         /// <returns></returns>
         public abstract IDataParameter CreateParameterLongBlob(string paramName, object value);
+
         /// <summary>
-        /// 
+        /// 创建blob类型的参数
         /// </summary>
-        /// <param name="paramName"></param>
-        /// <param name="value"></param>
+        /// <param name="paramName">不带@参数名</param>
+        /// <param name="value">字段值</param>
         /// <returns></returns>
         public abstract IDataParameter CreateParameterByBlob(string paramName, object value);
+
         /// <summary>
         /// 创建CommandStruct对象
         /// </summary>
-        /// <param name="tableName"></param>
-        /// <param name="editType"></param>
+        /// <param name="tableName">表名</param>
+        /// <param name="editType">命令操作类型</param>
         /// <param name="columns">查询列</param>
         /// <returns></returns>
         public abstract CommandStruct CreateCommandStruct(string tableName, CommandMode editType, string columns = "");
@@ -363,7 +372,7 @@ namespace ZyGames.Framework.Data
         public abstract CommandFilter CreateCommandFilter();
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="parameters"></param>
@@ -388,17 +397,17 @@ namespace ZyGames.Framework.Data
         /// <summary>
         /// 格式化条件语句中的参数
         /// </summary>
-        /// <param name="fieldName"></param>
+        /// <param name="fieldName">字段名</param>
         /// <param name="compareChar">比较字符,大于、等于、小于等</param>
-        /// <param name="paramName"></param>
+        /// <param name="paramName">可定制的参数名，空则取字段名</param>
         /// <returns></returns>
         public abstract string FormatFilterParam(string fieldName, string compareChar = "", string paramName = "");
 
         /// <summary>
         /// 格式化Select语句中的列名
         /// </summary>
-        /// <param name="splitChat"></param>
-        /// <param name="columns"></param>
+        /// <param name="splitChat">列之间的分隔符</param>
+        /// <param name="columns">列名集合</param>
         /// <returns></returns>
         public abstract string FormatQueryColumn(string splitChat, ICollection<string> columns);
 
